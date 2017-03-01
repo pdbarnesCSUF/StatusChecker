@@ -1,0 +1,68 @@
+﻿//https://msdn.microsoft.com/en-us/library/system.net.sockets.tcpclient(v=vs.110).aspx
+//https://msdn.microsoft.com/en-us/library/system.net.sockets.udpclient(v=vs.110).aspx
+
+using ProtoBuf;
+using System;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+
+namespace ConsoleNet1
+{
+    class Program_Client
+    {
+        static int port = 11001; //different because on same computer
+        //UDP data
+        static void SendUDP(string address, int srv_port, MessageStruct msg)
+        {
+            // This constructor arbitrarily assigns the local port number.
+            UdpClient udpClient = new UdpClient(port);
+            try
+            {
+                Console.Write("Connecting...");
+                udpClient.Connect(address, srv_port);
+                Console.WriteLine("gonna send:" + msg.name + ";" + msg.msg);
+                // Sends a message to the host to which you have connected.
+                MemoryStream ms = new MemoryStream();
+                Serializer.Serialize(ms, msg);
+                Byte[] sendBytes = ms.ToArray();
+                udpClient.Send(sendBytes, sendBytes.Length);
+
+                // Sends a message to a different host using optional hostname and port parameters.
+                //UdpClient udpClientB = new UdpClient();
+                //udpClientB.Send(sendBytes, sendBytes.Length, "AlternateHostMachineName", 11000);
+
+                //IPEndPoint object will allow us to read datagrams sent from any source.
+                IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Parse(address), 0);
+
+                // Blocks until a message returns on this socket from a remote host.
+                Byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
+                string returnData = Encoding.ASCII.GetString(receiveBytes);
+
+                // Uses the IPEndPoint object to determine which of these two hosts responded.
+                Console.WriteLine("This is the message you received " +
+                                             returnData.ToString());
+                Console.WriteLine("This message was sent from " +
+                                            RemoteIpEndPoint.Address.ToString() +
+                                            " on their port number " +
+                                            RemoteIpEndPoint.Port.ToString());
+
+                udpClient.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+        static void Main(string[] args)
+        {
+            MessageStruct data;
+            data.name = "patatoe";
+            Console.Write("Message:");
+            data.msg = Console.ReadLine();
+            //SendUDP("127.0.0.1", 13000, data.msg);
+            SendUDP("127.0.0.1", 13000, data);
+        }
+    }
+}
