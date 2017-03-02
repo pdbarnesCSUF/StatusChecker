@@ -47,5 +47,5 @@ public struct NetworkInterfaceSlim
     public PhysicalAddress mac_address;
     public IPAddress ip;
     public OperationalStatus status; //https://msdn.microsoft.com/en-us/library/system.net.networkinformation.operationalstatus(v=vs.110).aspx
-    public 
+    //public NetworkInterfaceType type; //dont know if we really care about this
 }
