@@ -59,7 +59,6 @@ public struct MessageStruct
 //https://msdn.microsoft.com/en-us/library/system.net.networkinformation.networkinterface(v=vs.110).aspx
 //yes you must protobuf for all nested classes
 //GOOD TO KNOW (:
-
 [ProtoContract]
 public struct NetworkInterfaceSlim
 {
@@ -78,3 +77,17 @@ public struct NetworkInterfaceSlim
         Console.WriteLine(ip);
     }
 }
+
+//need an client options struct
+    //auto send frequency
+
+//need a server options struct
+    //check frequency
+    //force recheck frequency
+
+//need a GUI identifier struct
+    //label
+    //username??
+    //hostname
+    //ip
+    //mac

@@ -16,7 +16,10 @@ namespace ConsoleNet1
     {
         static int port = 11001; //different because on same computer
         static uint messagesGenerated= 0;
-        //chose UDP since... many computer trashing hte network for a non-critical function....
+        //need a options struct (might as well be struct to send to the server
+
+        //chose UDP since... many computer trashing hte network for a non-critical function...
+        //...might as well be lightweight
         //for reliability, red flag if missing several checkins, not just one
         static MessageStruct GetReport()
         {

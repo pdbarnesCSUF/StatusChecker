@@ -20,6 +20,14 @@ namespace Server
         static int port = 13000;
         static UdpClient udpClient = null;
         static IPEndPoint RemoteIpEndPoint = null;
+        //need a container for clients
+            //MessageStruct
+            //optionsstruct
+        //need a container for GUI
+            //identifier struct
+            //how often to push for updates
+            //want realtime updates bool
+
         //UDP string
         static void StartServer()
         {
