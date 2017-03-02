@@ -20,7 +20,7 @@ namespace ConsoleNet1
         //for reliability, red flag if missing several checkins, not just one
         static MessageStruct GetReport()
         {
-            MessageStruct msg;
+            MessageStruct msg = new MessageStruct();
             //======get message info
 
             //======get general info
@@ -43,7 +43,7 @@ namespace ConsoleNet1
             {
                 Console.Write("Connecting...");
                 udpClient.Connect(address, srv_port);
-                Console.WriteLine("gonna send:" + msg.name + ";" + msg.msg);
+                Console.WriteLine("gonna send:" + msg.label + ";" + msg.os_name);
                 // Sends a message to the host to which you have connected.
                 MemoryStream ms = new MemoryStream();
                 Serializer.Serialize(ms, msg);
@@ -78,11 +78,10 @@ namespace ConsoleNet1
         }
         static void Main(string[] args)
         {
-            MessageStruct data;
-            data.name = "patatoe";
+            MessageStruct data = new MessageStruct();
+            data.label = "patatoe";
             Console.Write("Message:");
-            data.msg = Console.ReadLine();
-            //SendUDP("127.0.0.1", 13000, data.msg);
+            data.os_name = Console.ReadLine();
             SendUDP("127.0.0.1", 13000, data);
         }
     }

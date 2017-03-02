@@ -48,8 +48,8 @@ namespace Server
                     MessageStruct msg = (MessageStruct) Serializer.Deserialize<MessageStruct>(ms);
 
                     // Uses the IPEndPoint object to determine which of these two hosts responded.
-                    Console.WriteLine(msg.name + " said " +
-                                                 msg.msg);
+                    Console.WriteLine(msg.label + " said " +
+                                                 msg.os_name);
                     Console.WriteLine("This message was sent from " +
                                                 RemoteIpEndPoint.Address.ToString() +
                                                 " on their port number " +
