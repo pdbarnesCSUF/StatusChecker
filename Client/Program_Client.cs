@@ -4,7 +4,9 @@
 using ProtoBuf;
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 
@@ -13,6 +15,25 @@ namespace ConsoleNet1
     class Program_Client
     {
         static int port = 11001; //different because on same computer
+        static uint messagesGenerated= 0;
+        //chose UDP since... many computer trashing hte network for a non-critical function....
+        //for reliability, red flag if missing several checkins, not just one
+        static MessageStruct GetReport()
+        {
+            MessageStruct msg;
+            //======get message info
+
+            //======get general info
+
+            //======get network info
+            //===MAC address
+            //http://stackoverflow.com/questions/850650/reliable-method-to-get-machines-mac-address-in-c-sharp#7661829
+            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+            //msg.mac_address = nics[0].GetPhysicalAddress();
+            //===IP address
+            //done! :D
+            return msg;
+        }
         //UDP data
         static void SendUDP(string address, int srv_port, MessageStruct msg)
         {
