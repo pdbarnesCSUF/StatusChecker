@@ -11,26 +11,27 @@ public struct MessageStruct
 {
     //=====message=====
     [ProtoMember(1)] public string label; //doi a personel label
-    [ProtoMember(2)] public uint status; //ENUM'd... in THIS? file?
+    [ProtoMember(2)] public int status; //ENUM'd... in THIS? file?
     [ProtoMember(3)] public uint msg_number; //msg number, used to detect missed packets
     [ProtoMember(4)] public DateTime time_stamp; //when generated
     [ProtoMember(5)] public uint ping; //ping to server result, can be used to detect one-way network problems
     [ProtoMember(6)] public uint client_version;
+    [ProtoMember(7)] public uint send_frequency; //in seconds, its just one option anyways, put here
     //=====general=====
-    [ProtoMember(7)] public string hostname;
-    [ProtoMember(8)] public Guid machine_guid; //from HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography\MachineGuid
-    [ProtoMember(9)] public string os_name;  //FIXME temp use as "msg"
-    [ProtoMember(10)] public uint[] cpus; //one for each cpu/core/whatever
-    [ProtoMember(11)] public uint ram_total;
-    [ProtoMember(12)] public uint ram_used;
-    [ProtoMember(13)] public uint swap_total;
-    [ProtoMember(14)] public uint swap_used;
-    [ProtoMember(15)] public uint[] hdds_total; //combine to a hdd struct with driveletter, name, used, total
-    [ProtoMember(16)] public uint[] hdds_used;
+    [ProtoMember(8)] public string hostname;
+    [ProtoMember(9)] public Guid machine_guid; //from HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography\MachineGuid
+    [ProtoMember(10)] public string os_name;  //FIXME temp use as "msg"
+    [ProtoMember(11)] public uint[] cpus; //one for each cpu/core/whatever
+    [ProtoMember(12)] public uint ram_total;
+    [ProtoMember(13)] public uint ram_used;
+    [ProtoMember(14)] public uint swap_total;
+    [ProtoMember(15)] public uint swap_used;
+    [ProtoMember(16)] public uint[] hdds_total; //combine to a hdd struct with driveletter, name, used, total
+    [ProtoMember(17)] public uint[] hdds_used;
     // [ProtoMember(1)] //public uint domain_status; //no idea what type yet
-    [ProtoMember(17)] public uint processes_total;
+    [ProtoMember(18)] public uint processes_total;
     //=====networking=====
-    [ProtoMember(18)] public NetworkInterfaceSlim[] nics;
+    [ProtoMember(19)] public NetworkInterfaceSlim[] nics;
 
     //=====func=====
     public void output()
@@ -38,6 +39,7 @@ public struct MessageStruct
         Console.WriteLine(label);
         Console.WriteLine(status + " " + time_stamp + " " + msg_number);
         Console.WriteLine("ver:" + client_version + " ping:" + ping);
+        Console.WriteLine("sec:" + send_frequency);
         Console.WriteLine(hostname);
         Console.WriteLine(machine_guid);
         Console.WriteLine(os_name);
@@ -77,9 +79,6 @@ public struct NetworkInterfaceSlim
         Console.WriteLine(ip);
     }
 }
-
-//need an client options struct
-    //auto send frequency
 
 //need a server options struct
     //check frequency

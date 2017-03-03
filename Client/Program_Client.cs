@@ -4,7 +4,6 @@
 using ProtoBuf;
 using System;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -14,8 +13,19 @@ namespace ConsoleNet1
 {
     class Program_Client
     {
+        //actual options, parse from file or defaults
+        static string label = "potatoe client";
+        static uint send_frequency = 1; //in seconds
         static int port = 11001; //different because on same computer
-        static uint messagesGenerated= 0;
+        //just globals
+        static int status = 1;
+        const uint client_version = 1;
+        static uint messagesGenerated = 0;
+        static uint MessageCount()
+        {
+            ++messagesGenerated;
+            return messagesGenerated;
+        }
         //need a options struct (might as well be struct to send to the server
 
         //chose UDP since... many computer trashing hte network for a non-critical function...
@@ -24,17 +34,46 @@ namespace ConsoleNet1
         static MessageStruct GetReport()
         {
             MessageStruct msg = new MessageStruct();
-            //======get message info
+            try
+            {
+                //======get message info
+                msg.label = label;
+                msg.status = status; //TODO
+                msg.msg_number = MessageCount();
+                msg.time_stamp = DateTime.Now;
+                msg.ping = 999; //TODO
+                msg.client_version = client_version;
+                msg.send_frequency = send_frequency;
+                //======get general info
 
-            //======get general info
-
-            //======get network info
-            //===MAC address
-            //http://stackoverflow.com/questions/850650/reliable-method-to-get-machines-mac-address-in-c-sharp#7661829
-            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
-            //msg.mac_address = nics[0].GetPhysicalAddress();
-            //===IP address
-            //done! :D
+                //======get network info
+                //http://stackoverflow.com/questions/850650/reliable-method-to-get-machines-mac-address-in-c-sharp#7661829
+                NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+                msg.nics = new NetworkInterfaceSlim[nics.Length];
+                for(int i = 0; i < nics.Length; ++i)
+                {
+                    msg.nics[i].name = nics[i].Name;
+                    msg.nics[i].status = nics[i].OperationalStatus;
+                    msg.nics[i].speed = nics[i].Speed;
+                    msg.nics[i].mac_address = nics[i].GetPhysicalAddress();
+                    //ip complciated because multiple addresses possible
+                    foreach (var x in nics[i].GetIPProperties().UnicastAddresses)
+                    {
+                        if (x.Address.AddressFamily == AddressFamily.InterNetwork && x.IsDnsEligible)
+                        {
+                            msg.nics[i].ip = x.Address;
+                        }
+                    }
+                    //msg.nics[i].type = nics[i].GetType();
+                }
+                //===IP address
+                //done! :D
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                msg.status = 0; //TODO ERROR status
+            }
             return msg;
         }
         //UDP data
@@ -73,6 +112,11 @@ namespace ConsoleNet1
                                             RemoteIpEndPoint.Port.ToString());
 
                 udpClient.Close();
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("Could not connect to server (" + address + ":" + srv_port + ")");
+                Console.WriteLine(e.Message);
             }
             catch (Exception e)
             {
