@@ -43,11 +43,13 @@ namespace ConsoleNet1
                 msg.client_version = client_version;
                 msg.send_frequency = send_frequency;
                 //======get general info
+                //---hostname
                 msg.hostname = System.Environment.MachineName;
+                //---guid
                 //getting this sucks apparently
-                //ManagementObject os = new ManagementObject("Win32_OperatingSystem=@");
                 //CimInstance myDrive = new CimInstance("Win32_OperatingSystem=@");
                 //string serial = (string)os["SerialNumber"];
+                //---os version
                 //ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem");
                 //foreach (ManagementObject os in searcher.Get())
                 //{
@@ -58,7 +60,7 @@ namespace ConsoleNet1
                 Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.LocalMachine;
                 Microsoft.Win32.RegistryKey skey = key.OpenSubKey(subKey);
                 msg.os_name = skey.GetValue("ProductName").ToString() + " " + skey.GetValue("CSDVersion").ToString();
-
+                //---cpus
                 //======get network info
                 //http://stackoverflow.com/questions/850650/reliable-method-to-get-machines-mac-address-in-c-sharp#7661829
                 NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
