@@ -5,7 +5,7 @@ using System.Net.NetworkInformation;
 
 //https://msdn.microsoft.com/en-us/library/system.net.networkinformation.networkinterface(v=vs.110).aspx
 //has some networkstuff and some domain stuff in the code
-//TODO add default blank values
+//TODO stop calling this a message.... a report maybe?
 [ProtoContract]
 public struct MessageStruct
 {
@@ -21,7 +21,7 @@ public struct MessageStruct
     [ProtoMember(8)]  public string hostname;
     [ProtoMember(9)]  public Guid machine_guid; //apparetnyl hard to get and unreliable? whatever
     [ProtoMember(10)] public string os_name;  //Friendly OS name (Windows Potato SP23)
-    [ProtoMember(11)] public uint[] cpus; //one for each cpu/core/whatever
+    [ProtoMember(11)] public uint[] cpus; //one for each cpu/core/whatever, combine into struct w load on it?
     [ProtoMember(12)] public uint ram_total;
     [ProtoMember(13)] public uint ram_used;
     [ProtoMember(14)] public uint swap_total;
@@ -33,7 +33,7 @@ public struct MessageStruct
     //=====networking=====
     [ProtoMember(19)] public NetworkInterfaceSlim[] nics;
 
-    //[ProtoMember(20)] public string msg; //the CUSTOM message, either by a person or debug
+    [ProtoMember(20)] public string msg; //the CUSTOM message, either by a person or debug
 
     //=====func=====
     public void output()
@@ -57,6 +57,7 @@ public struct MessageStruct
         {
             nic.output();
         }
+        Console.WriteLine("MSG:" + msg);
     }
 }
 

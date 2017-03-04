@@ -44,7 +44,6 @@ namespace Server
                 while (true)
                 {
                     Byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
-                    //string receiveData = Encoding.ASCII.GetString(receiveBytes);
                     // Sends a message to the host to which you have connected.
                     
                     MemoryStream ms = new MemoryStream(receiveBytes);
@@ -52,11 +51,13 @@ namespace Server
 
                     // Uses the IPEndPoint object to determine which of these two hosts responded.
                     Console.WriteLine(msg.label + " said " +
-                                                 msg.os_name);
-                    Console.WriteLine("This message was sent from " +
+                                                 msg.msg);
+                    Console.WriteLine("Sent from " +
                                                 RemoteIpEndPoint.Address.ToString() +
-                                                " on their port number " +
+                                                " on their port:" +
                                                 RemoteIpEndPoint.Port.ToString());
+                    Console.WriteLine("=====objdump=====");
+                    msg.output();
                     //send back
                     Byte[] sendBytes = Encoding.ASCII.GetBytes("Hi " +
                                                 RemoteIpEndPoint.Address.ToString() +

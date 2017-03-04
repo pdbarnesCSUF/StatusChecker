@@ -1,6 +1,7 @@
 ﻿//https://msdn.microsoft.com/en-us/library/system.net.sockets.tcpclient(v=vs.110).aspx
 //https://msdn.microsoft.com/en-us/library/system.net.sockets.udpclient(v=vs.110).aspx
 //http://stackoverflow.com/questions/4314630/managementobject-class-not-showing-up-in-system-management-namespace
+//https://msdn.microsoft.com/en-us/library/windows/desktop/aa394239(v=vs.85).aspx#methods
 
 using ProtoBuf;
 using System;
@@ -61,6 +62,7 @@ namespace ConsoleNet1
                 Microsoft.Win32.RegistryKey skey = key.OpenSubKey(subKey);
                 msg.os_name = skey.GetValue("ProductName").ToString() + " " + skey.GetValue("CSDVersion").ToString();
                 //---cpus
+
                 //======get network info
                 //http://stackoverflow.com/questions/850650/reliable-method-to-get-machines-mac-address-in-c-sharp#7661829
                 NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
@@ -103,7 +105,7 @@ namespace ConsoleNet1
             {
                 Console.Write("Connecting...");
                 udpClient.Connect(address, srv_port);
-                Console.WriteLine("gonna send:" + msg.label + ";" + msg.os_name);
+                Console.WriteLine("gonna send:" + msg.label + ";" + msg.msg);
                 // Sends a message to the host to which you have connected.
                 MemoryStream ms = new MemoryStream();
                 Serializer.Serialize(ms, msg);
@@ -111,7 +113,6 @@ namespace ConsoleNet1
                 udpClient.Send(sendBytes, sendBytes.Length);
 
                 // Sends a message to a different host using optional hostname and port parameters.
-                //UdpClient udpClientB = new UdpClient();
                 //udpClientB.Send(sendBytes, sendBytes.Length, "AlternateHostMachineName", 11000);
 
                 //IPEndPoint object will allow us to read datagrams sent from any source.
