@@ -1,5 +1,6 @@
 ﻿//https://msdn.microsoft.com/en-us/library/system.net.sockets.tcpclient(v=vs.110).aspx
 //https://msdn.microsoft.com/en-us/library/system.net.sockets.udpclient(v=vs.110).aspx
+//http://stackoverflow.com/questions/4314630/managementobject-class-not-showing-up-in-system-management-namespace
 
 using ProtoBuf;
 using System;
@@ -26,12 +27,9 @@ namespace ConsoleNet1
             ++messagesGenerated;
             return messagesGenerated;
         }
-        //need a options struct (might as well be struct to send to the server
+        //TODO make a global "static" as in.. for things that dont change, Message struct to only update whats necessary
 
-        //chose UDP since... many computer trashing hte network for a non-critical function...
-        //...might as well be lightweight
-        //for reliability, red flag if missing several checkins, not just one
-        static MessageStruct GetReport()
+        static MessageStruct NewReport()
         {
             MessageStruct msg = new MessageStruct();
             try
@@ -45,6 +43,21 @@ namespace ConsoleNet1
                 msg.client_version = client_version;
                 msg.send_frequency = send_frequency;
                 //======get general info
+                msg.hostname = System.Environment.MachineName;
+                //getting this sucks apparently
+                //ManagementObject os = new ManagementObject("Win32_OperatingSystem=@");
+                //CimInstance myDrive = new CimInstance("Win32_OperatingSystem=@");
+                //string serial = (string)os["SerialNumber"];
+                //ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem");
+                //foreach (ManagementObject os in searcher.Get())
+                //{
+                //    result = os["Caption"].ToString();
+                //    break;
+                //}
+                string subKey = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion";
+                Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.LocalMachine;
+                Microsoft.Win32.RegistryKey skey = key.OpenSubKey(subKey);
+                msg.os_name = skey.GetValue("ProductName").ToString() + " " + skey.GetValue("CSDVersion").ToString();
 
                 //======get network info
                 //http://stackoverflow.com/questions/850650/reliable-method-to-get-machines-mac-address-in-c-sharp#7661829
@@ -76,6 +89,9 @@ namespace ConsoleNet1
             }
             return msg;
         }
+        //chose UDP since... many computer trashing hte network for a non-critical function...
+        //...might as well be lightweight
+        //for reliability, red flag if missing several checkins, not just one
         //UDP data
         static void SendUDP(string address, int srv_port, MessageStruct msg)
         {
@@ -125,11 +141,12 @@ namespace ConsoleNet1
         }
         static void Main(string[] args)
         {
-            MessageStruct data = new MessageStruct();
-            data.label = "patatoe";
-            Console.Write("Message:");
-            data.os_name = Console.ReadLine();
-            SendUDP("127.0.0.1", 13000, data);
+            MessageStruct data = NewReport();
+            //MessageStruct data = new MessageStruct();
+            //data.label = "patatoe";
+            //Console.Write("Message:");
+            //data.os_name = Console.ReadLine();
+            //SendUDP("127.0.0.1", 13000, data);
         }
     }
 }

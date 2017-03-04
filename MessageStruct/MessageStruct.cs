@@ -10,17 +10,17 @@ using System.Net.NetworkInformation;
 public struct MessageStruct
 {
     //=====message=====
-    [ProtoMember(1)] public string label; //doi a personel label
-    [ProtoMember(2)] public int status; //ENUM'd... in THIS? file?
-    [ProtoMember(3)] public uint msg_number; //msg number, used to detect missed packets
-    [ProtoMember(4)] public DateTime time_stamp; //when generated
-    [ProtoMember(5)] public uint ping; //ping to server result, can be used to detect one-way network problems
-    [ProtoMember(6)] public uint client_version;
-    [ProtoMember(7)] public uint send_frequency; //in seconds, its just one option anyways, put here
+    [ProtoMember(1)]  public string label; //doi a personel label
+    [ProtoMember(2)]  public int status; //ENUM'd... in THIS? file?
+    [ProtoMember(3)]  public uint msg_number; //msg number, used to detect missed packets
+    [ProtoMember(4)]  public DateTime time_stamp; //when generated
+    [ProtoMember(5)]  public uint ping; //ping to server result, can be used to detect one-way network problems
+    [ProtoMember(6)]  public uint client_version;
+    [ProtoMember(7)]  public uint send_frequency; //in seconds, its just one option anyways, put here
     //=====general=====
-    [ProtoMember(8)] public string hostname;
-    [ProtoMember(9)] public Guid machine_guid; //from HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography\MachineGuid
-    [ProtoMember(10)] public string os_name;  //FIXME temp use as "msg"
+    [ProtoMember(8)]  public string hostname;
+    [ProtoMember(9)]  public Guid machine_guid; //apparetnyl hard to get and unreliable? whatever
+    [ProtoMember(10)] public string os_name;  //Friendly OS name (Windows Potato SP23)
     [ProtoMember(11)] public uint[] cpus; //one for each cpu/core/whatever
     [ProtoMember(12)] public uint ram_total;
     [ProtoMember(13)] public uint ram_used;
@@ -32,6 +32,8 @@ public struct MessageStruct
     [ProtoMember(18)] public uint processes_total;
     //=====networking=====
     [ProtoMember(19)] public NetworkInterfaceSlim[] nics;
+
+    //[ProtoMember(20)] public string msg; //the CUSTOM message, either by a person or debug
 
     //=====func=====
     public void output()
