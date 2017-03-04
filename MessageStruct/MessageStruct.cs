@@ -19,7 +19,7 @@ public struct MessageStruct
     [ProtoMember(7)]  public uint send_frequency; //in seconds, its just one option anyways, put here
     //=====general=====
     [ProtoMember(8)]  public string hostname;
-    [ProtoMember(9)]  public Guid machine_guid; //apparetnyl hard to get and unreliable? whatever
+    [ProtoMember(9)]  public string machine_serial; //apparetnyl hard to get and unreliable? whatever
     [ProtoMember(10)] public string os_name;  //Friendly OS name (Windows Potato SP23)
     [ProtoMember(11)] public uint[] cpus; //one for each cpu/core/whatever, combine into struct w load on it?
     [ProtoMember(12)] public uint ram_total;

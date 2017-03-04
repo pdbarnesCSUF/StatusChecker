@@ -1,11 +1,13 @@
 ﻿//https://msdn.microsoft.com/en-us/library/system.net.sockets.tcpclient(v=vs.110).aspx
 //https://msdn.microsoft.com/en-us/library/system.net.sockets.udpclient(v=vs.110).aspx
 //http://stackoverflow.com/questions/4314630/managementobject-class-not-showing-up-in-system-management-namespace
-//https://msdn.microsoft.com/en-us/library/windows/desktop/aa394239(v=vs.85).aspx#methods
-
+//https://msdn.microsoft.com/en-us/library/windows/desktop/aa394239(v=vs.85).aspx Win32_OperatingSystem
+//https://msdn.microsoft.com/en-us/library/windows/desktop/aa393244(v=vs.85).aspx getting WMI
 using ProtoBuf;
 using System;
 using System.IO;
+using System.Linq;
+using System.Management;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -47,9 +49,13 @@ namespace ConsoleNet1
                 //---hostname
                 msg.hostname = System.Environment.MachineName;
                 //---guid
+                //turns out that ITS NOT A GUID!!!!
                 //getting this sucks apparently
                 //CimInstance myDrive = new CimInstance("Win32_OperatingSystem=@");
                 //string serial = (string)os["SerialNumber"];
+                string serial = (string) (from x in new ManagementObjectSearcher("SELECT SerialNumber FROM Win32_OperatingSystem").Get().Cast<ManagementObject>()
+                            select x.GetPropertyValue("SerialNumber")).FirstOrDefault();
+                msg.machine_serial = (serial != null) ? serial : "Unknown";
                 //---os version
                 //ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem");
                 //foreach (ManagementObject os in searcher.Get())
@@ -57,10 +63,10 @@ namespace ConsoleNet1
                 //    result = os["Caption"].ToString();
                 //    break;
                 //}
-                string subKey = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion";
-                Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.LocalMachine;
-                Microsoft.Win32.RegistryKey skey = key.OpenSubKey(subKey);
-                msg.os_name = skey.GetValue("ProductName").ToString() + " " + skey.GetValue("CSDVersion").ToString();
+                //TODO remove LINQ... because i hate it
+                var name = (from x in new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem").Get().Cast<ManagementObject>()
+                            select x.GetPropertyValue("Caption")).FirstOrDefault();
+                msg.os_name = (name != null) ? name.ToString() : "Unknown";
                 //---cpus
 
                 //======get network info
