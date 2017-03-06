@@ -27,7 +27,7 @@ public struct MessageStruct
     [ProtoMember(13)] public uint ram_used;
     [ProtoMember(14)] public uint swap_total;
     [ProtoMember(15)] public uint swap_used;
-    [ProtoMember(16)] public DriveInfoSlim[] hdds;
+    [ProtoMember(16)] public DriveInfoSlim[] drives;
     // [ProtoMember(17)] //public uint domain_status; //no idea what type yet
     [ProtoMember(18)] public uint processes_total;
     //=====networking=====
@@ -48,11 +48,11 @@ public struct MessageStruct
         Console.WriteLine(cpus);
         Console.WriteLine(ram_used + "/" + ram_total);
         Console.WriteLine(swap_used + "/" + swap_total);
-        if (hdds != null)
+        if (drives != null)
         {
-            for (int i = 0; i < hdds.Length; ++i) //FIXME!!!! CRASH HERE!!!
+            for (int i = 0; i < drives.Length; ++i) //FIXME!!!! CRASH HERE!!!
             {
-                Console.WriteLine(hdds[i]);
+                Console.WriteLine(drives[i]);
             }
         }
         else

@@ -69,6 +69,19 @@ namespace ConsoleNet1
                 msg.os_name = (name != null) ? name.ToString() : "Unknown";
                 //---cpus
 
+                //--get hdds
+                DriveInfo[] drives = DriveInfo.GetDrives();
+                msg.drives = new DriveInfoSlim[drives.Length];
+                for (int i = 0; i < drives.Length; ++i)
+                {
+                    msg.drives[i].name = drives[i].Name;
+                    msg.drives[i].type = drives[i].DriveType;
+                    if (drives[i].IsReady)
+                    {
+                        msg.drives[i].free = drives[i].TotalFreeSpace;
+                        msg.drives[i].total = drives[i].TotalSize;
+                    }
+                }
                 //======get network info
                 //http://stackoverflow.com/questions/850650/reliable-method-to-get-machines-mac-address-in-c-sharp#7661829
                 NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
