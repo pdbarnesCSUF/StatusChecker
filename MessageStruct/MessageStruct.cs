@@ -22,7 +22,7 @@ public struct MessageStruct
     [ProtoMember(8)]  public string hostname;
     [ProtoMember(9)]  public string machine_serial; //apparetnyl hard to get and unreliable? whatever
     [ProtoMember(10)] public string os_name;  //Friendly OS name (Windows Potato SP23)
-    [ProtoMember(11)] public uint[] cpus; //one for each cpu/core/whatever, combine into struct w load on it?
+    [ProtoMember(11)] public ushort[] cpus; //one for each core, dont need class, length for total.
     [ProtoMember(12)] public ulong ram_total;
     [ProtoMember(13)] public ulong ram_used;
     [ProtoMember(14)] public ulong swap_total;
@@ -45,7 +45,16 @@ public struct MessageStruct
         Console.WriteLine(hostname);
         Console.WriteLine(machine_serial);
         Console.WriteLine(os_name);
-        Console.WriteLine(cpus);
+        if (cpus != null)
+        {
+            uint sum = 0;
+            foreach (ushort cpu in cpus)
+            {
+                Console.Write(cpu + "% ");
+                sum += cpu;
+            }
+            Console.WriteLine("AVG:" + sum/cpus.Length + "%");
+        }
         Console.WriteLine("RAM:" + ram_used / 1024 / 1024 + "/" + ram_total / 1024 / 1024 + " (mb)");
         Console.WriteLine("SWAP:" + swap_used / 1024 / 1024 + "/" + swap_total / 1024 / 1024 + " (mb)");
         if (drives != null)

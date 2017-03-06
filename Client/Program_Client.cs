@@ -3,6 +3,7 @@
 //http://stackoverflow.com/questions/4314630/managementobject-class-not-showing-up-in-system-management-namespace
 //https://msdn.microsoft.com/en-us/library/windows/desktop/aa394239(v=vs.85).aspx Win32_OperatingSystem
 //https://msdn.microsoft.com/en-us/library/windows/desktop/aa393244(v=vs.85).aspx getting WMI
+//Console.WriteLine(cpus[i]["PercentProcessorTime"].GetType().Name); .GetType().Name to get name of type
 using ProtoBuf;
 using System;
 using System.Diagnostics;
@@ -103,6 +104,16 @@ namespace ConsoleNet1
                             select x.GetPropertyValue("Caption")).FirstOrDefault();
                 msg.os_name = (name != null) ? name.ToString() : "Unknown";
                 //---cpus
+                //http://stackoverflow.com/questions/9777661/returning-cpu-usage-in-wmi-using-c-sharp
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher("select * from Win32_PerfFormattedData_PerfOS_Processor");
+                ManagementObjectCollection cpus_collection = searcher.Get();
+                ManagementObject[] cpus = new ManagementObject[cpus_collection.Count];
+                cpus_collection.CopyTo(cpus, 0);
+                msg.cpus = new ushort[cpus.Count() - 1]; //-1 for "_total"
+                for (int i = 0; i < msg.cpus.Length; ++i) 
+                {
+                    msg.cpus[i] = (ushort)(ulong)(cpus[i]["PercentProcessorTime"]); //raw is Int64
+                }
                 //---ram
                 MEMORYSTATUSEX memStatus = new MEMORYSTATUSEX();
                 if (GlobalMemoryStatusEx(memStatus))
