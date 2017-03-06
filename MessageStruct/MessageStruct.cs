@@ -29,7 +29,7 @@ public struct MessageStruct
     [ProtoMember(15)] public ulong swap_used;
     [ProtoMember(16)] public DriveInfoSlim[] drives;
     // [ProtoMember(17)] //public uint domain_status; //no idea what type yet
-    [ProtoMember(18)] public uint processes_total;
+    [ProtoMember(18)] public int processes_total;
     //=====networking=====
     [ProtoMember(19)] public NetworkInterfaceSlim[] nics;
 

@@ -125,6 +125,9 @@ namespace ConsoleNet1
                         msg.drives[i].total = drives[i].TotalSize;
                     }
                 }
+                //---processes
+                msg.processes_total = Process.GetProcesses().Length;
+
                 //======get network info
                 //http://stackoverflow.com/questions/850650/reliable-method-to-get-machines-mac-address-in-c-sharp#7661829
                 NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
