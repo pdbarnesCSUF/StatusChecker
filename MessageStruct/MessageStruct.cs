@@ -100,7 +100,7 @@ public struct NetworkInterfaceSlim
     public void output()
     {
         Console.WriteLine(name);
-        Console.WriteLine(status + " spd(MB):" + speed/1024/1024); //mega
+        Console.WriteLine("Status:" + status + " spd(MB):" + speed/1024/1024); //mega
         Console.WriteLine(mac_address);
         Console.WriteLine(ip);
     }
