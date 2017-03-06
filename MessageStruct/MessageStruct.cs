@@ -41,7 +41,7 @@ public struct MessageStruct
         Console.WriteLine(label);
         Console.WriteLine(status + " " + time_stamp + " " + msg_number);
         Console.WriteLine("ver:" + client_version + " ping:" + ping);
-        Console.WriteLine("sec:" + send_frequency);
+        Console.WriteLine("send freq:" + send_frequency);
         Console.WriteLine(hostname);
         Console.WriteLine(machine_serial);
         Console.WriteLine(os_name);
