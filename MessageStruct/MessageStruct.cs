@@ -23,10 +23,10 @@ public struct MessageStruct
     [ProtoMember(9)]  public string machine_serial; //apparetnyl hard to get and unreliable? whatever
     [ProtoMember(10)] public string os_name;  //Friendly OS name (Windows Potato SP23)
     [ProtoMember(11)] public uint[] cpus; //one for each cpu/core/whatever, combine into struct w load on it?
-    [ProtoMember(12)] public uint ram_total;
-    [ProtoMember(13)] public uint ram_used;
-    [ProtoMember(14)] public uint swap_total;
-    [ProtoMember(15)] public uint swap_used;
+    [ProtoMember(12)] public ulong ram_total;
+    [ProtoMember(13)] public ulong ram_used;
+    [ProtoMember(14)] public ulong swap_total;
+    [ProtoMember(15)] public ulong swap_used;
     [ProtoMember(16)] public DriveInfoSlim[] drives;
     // [ProtoMember(17)] //public uint domain_status; //no idea what type yet
     [ProtoMember(18)] public uint processes_total;
@@ -83,7 +83,7 @@ public struct NetworkInterfaceSlim
 {
     [ProtoMember(1)] public string name;
     [ProtoMember(2)] public OperationalStatus status; //https://msdn.microsoft.com/en-us/library/system.net.networkinformation.operationalstatus(v=vs.110).aspx
-    [ProtoMember(3)] public Int64 speed; //in bits per second
+    [ProtoMember(3)] public long speed; //in bits per second
     [ProtoMember(4)] public PhysicalAddress mac_address;
     [ProtoMember(5)] public IPAddress ip;
     //[ProtoMember(6)] public NetworkInterfaceType type; //dont know if we really care about this
@@ -102,8 +102,8 @@ public struct DriveInfoSlim
 {
     [ProtoMember(1)] public DriveType type;
     [ProtoMember(2)] public string name;
-    [ProtoMember(3)] public Int64 free;
-    [ProtoMember(4)] public Int64 total;
+    [ProtoMember(3)] public long free;
+    [ProtoMember(4)] public long total;
     public override string ToString()
     {
         return name + " " + type + " " + free / 1024 / 2014 + "/" + total / 1024 / 1024 + " Free(mb)";
