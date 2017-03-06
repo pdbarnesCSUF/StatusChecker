@@ -1,7 +1,8 @@
-﻿using ProtoBuf;
+﻿//http://stackoverflow.com/questions/400135/listt-or-ilistt an interesting but ultimately confusing read
+using ProtoBuf;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Net.NetworkInformation;
 
 //https://msdn.microsoft.com/en-us/library/system.net.networkinformation.networkinterface(v=vs.110).aspx
@@ -133,13 +134,24 @@ public struct ClientStatus
         return label + report_lost + ":" + report_received;
     }
 }
-//need a server options struct
-    //check frequency
-    //force recheck frequency
 
-//need a GUI identifier struct
-    //label
-    //username??
-    //hostname
-    //ip
-    //mac
+//one static on server if use as options
+//sent out to other GUIs if they ask for it.
+[ProtoContract]
+public struct MessageServer
+{
+    [ProtoMember(1)] public int check_freq_client; //if client doesnt talk after x time, manually ask for a update
+    [ProtoMember(2)] public List<MessageGUI> guis;
+}
+
+//on the server, one per connected gui, inside of MessageServer
+//on the gui, just one static if used as options
+[ProtoContract]
+public struct MessageGUI
+{
+    [ProtoMember(1)] public string label; //personal label set by gui
+    [ProtoMember(2)] public string username; //username of the running user - not editable
+    [ProtoMember(3)] public string hostname; //hostname of gui - not editable
+    [ProtoMember(4)] public string ip; //ipaddress
+    [ProtoMember(5)] public string mac; //physical MAC address
+}
