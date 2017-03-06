@@ -165,7 +165,7 @@ namespace ConsoleNet1
                     {
                         if (x.Address.AddressFamily == AddressFamily.InterNetwork && x.IsDnsEligible)
                         {
-                            msg.nics[i].ip = x.Address;
+                            msg.nics[i].ip = x.Address.ToString();
                         }
                     }
                     //msg.nics[i].type = nics[i].GetType();

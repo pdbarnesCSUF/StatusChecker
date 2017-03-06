@@ -94,7 +94,7 @@ public struct NetworkInterfaceSlim
     [ProtoMember(2)] public OperationalStatus status; //https://msdn.microsoft.com/en-us/library/system.net.networkinformation.operationalstatus(v=vs.110).aspx
     [ProtoMember(3)] public long speed; //in bits per second
     [ProtoMember(4)] public string mac_address; //PhysicalAddress type wont serialize T_T
-    [ProtoMember(5)] public IPAddress ip;
+    [ProtoMember(5)] public string ip; //IPAddress doesn't serialize either!
     //[ProtoMember(6)] public NetworkInterfaceType type; //dont know if we really care about this
 
     public void output()
