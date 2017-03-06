@@ -1,4 +1,5 @@
 ﻿//http://stackoverflow.com/questions/400135/listt-or-ilistt an interesting but ultimately confusing read
+//rename file/projectto be more.... accurate
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Net.NetworkInformation;
 //has some networkstuff and some domain stuff in the code
 //TODO stop calling this a message.... a report maybe?
 [ProtoContract]
-public struct MessageStruct
+public struct MessageStruct //TODO rename to MessageClient
 {
     //=====message=====
     [ProtoMember(1)]  public string label; //doi a personel label
@@ -121,20 +122,29 @@ public struct DriveInfoSlim
     }
 }
 
+//a list of them kept on server
+//a list sent to GUIs to display
 [ProtoContract]
 public struct ClientStatus
 {
     [ProtoMember(1)] public string label;
-    [ProtoMember(2)] public MessageStruct report;
-    [ProtoMember(3)] public ulong report_last;
-    [ProtoMember(4)] public ulong report_received;
-    [ProtoMember(5)] public ulong report_lost;
+    [ProtoMember(2)] public string machine_serial; //used to uniquely identify the computer
+    [ProtoMember(3)] public MessageStruct report;
+    [ProtoMember(4)] public ulong report_last;
+    [ProtoMember(5)] public ulong report_received;
+    [ProtoMember(6)] public ulong report_lost;
     public override string ToString()
     {
         return label + report_lost + ":" + report_received;
     }
 }
 
+//a single one, sent from server to GUI
+[ProtoContract]
+public struct MessageClientList
+{
+    [ProtoMember(1)] public List<ClientStatus> client_list;
+}
 //one static on server if use as options
 //sent out to other GUIs if they ask for it.
 [ProtoContract]
