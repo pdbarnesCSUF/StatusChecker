@@ -46,8 +46,8 @@ public struct MessageStruct
         Console.WriteLine(machine_serial);
         Console.WriteLine(os_name);
         Console.WriteLine(cpus);
-        Console.WriteLine(ram_used + "/" + ram_total);
-        Console.WriteLine(swap_used + "/" + swap_total);
+        Console.WriteLine("RAM:" + ram_used / 1024 / 1024 + "/" + ram_total / 1024 / 1024 + " (mb)");
+        Console.WriteLine("SWAP:" + swap_used / 1024 / 1024 + "/" + swap_total / 1024 / 1024 + " (mb)");
         if (drives != null)
         {
             for (int i = 0; i < drives.Length; ++i) //FIXME!!!! CRASH HERE!!!

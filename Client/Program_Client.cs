@@ -5,12 +5,14 @@
 //https://msdn.microsoft.com/en-us/library/windows/desktop/aa393244(v=vs.85).aspx getting WMI
 using ProtoBuf;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Management;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace ConsoleNet1
@@ -31,6 +33,38 @@ namespace ConsoleNet1
             return messagesGenerated;
         }
         //TODO make a global "static" as in.. for things that dont change, Message struct to only update whats necessary
+        //==========borrowed code
+        //http://stackoverflow.com/questions/105031/how-do-you-get-total-amount-of-ram-the-computer-has#105084
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        private class MEMORYSTATUSEX
+        {
+            public uint dwLength;
+            public uint dwMemoryLoad;
+            public ulong ullTotalPhys;
+            public ulong ullAvailPhys;
+            public ulong ullTotalPageFile;
+            public ulong ullAvailPageFile;
+            public ulong ullTotalVirtual;
+            public ulong ullAvailVirtual;
+            public ulong ullAvailExtendedVirtual;
+            public MEMORYSTATUSEX()
+            {
+                this.dwLength = (uint)Marshal.SizeOf(this);
+            }
+        }
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        static extern bool GlobalMemoryStatusEx([In, Out] MEMORYSTATUSEX lpBuffer);
+        /* to use
+           ulong installedMemory;
+            MEMORYSTATUSEX memStatus = new MEMORYSTATUSEX();
+            if( GlobalMemoryStatusEx( memStatus))
+            { 
+               installedMemory = memStatus.ullTotalPhys;
+            }
+*/
+        //============ borrowed END
+
 
         static MessageStruct NewReport()
         {
@@ -68,8 +102,17 @@ namespace ConsoleNet1
                             select x.GetPropertyValue("Caption")).FirstOrDefault();
                 msg.os_name = (name != null) ? name.ToString() : "Unknown";
                 //---cpus
+                //---ram
+                MEMORYSTATUSEX memStatus = new MEMORYSTATUSEX();
+                if (GlobalMemoryStatusEx(memStatus))
+                {
+                    msg.ram_total = memStatus.ullTotalPhys;
+                    msg.ram_used = memStatus.ullAvailPhys;
+                    msg.swap_total = memStatus.ullTotalPageFile;
+                    msg.swap_used = memStatus.ullAvailPageFile;
+                }
 
-                //--get hdds
+                //---get hdds
                 DriveInfo[] drives = DriveInfo.GetDrives();
                 msg.drives = new DriveInfoSlim[drives.Length];
                 for (int i = 0; i < drives.Length; ++i)
