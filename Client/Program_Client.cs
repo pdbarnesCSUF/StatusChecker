@@ -159,7 +159,7 @@ namespace ConsoleNet1
                     msg.nics[i].name = nics[i].Name;
                     msg.nics[i].status = nics[i].OperationalStatus;
                     msg.nics[i].speed = nics[i].Speed;
-                    msg.nics[i].mac_address = nics[i].GetPhysicalAddress();
+                    msg.nics[i].mac_address = nics[i].GetPhysicalAddress().ToString(); //PhysicalAddress type wont serialize T_T
                     //ip complciated because multiple addresses possible
                     foreach (var x in nics[i].GetIPProperties().UnicastAddresses)
                     {
@@ -237,10 +237,13 @@ namespace ConsoleNet1
             label = "testing_client";
             //get report
             MessageStruct data = NewReport();
+            //msg
+            Console.Write("MESSAGE?:");
+            data.msg = Console.ReadLine();
             //output it
             data.output();
             //send it
-            //SendUDP(data);
+            SendUDP(data);
         }
     }
 }

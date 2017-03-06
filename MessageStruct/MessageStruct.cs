@@ -93,7 +93,7 @@ public struct NetworkInterfaceSlim
     [ProtoMember(1)] public string name;
     [ProtoMember(2)] public OperationalStatus status; //https://msdn.microsoft.com/en-us/library/system.net.networkinformation.operationalstatus(v=vs.110).aspx
     [ProtoMember(3)] public long speed; //in bits per second
-    [ProtoMember(4)] public PhysicalAddress mac_address;
+    [ProtoMember(4)] public string mac_address; //PhysicalAddress type wont serialize T_T
     [ProtoMember(5)] public IPAddress ip;
     //[ProtoMember(6)] public NetworkInterfaceType type; //dont know if we really care about this
 
@@ -113,6 +113,7 @@ public struct DriveInfoSlim
     [ProtoMember(2)] public string name;
     [ProtoMember(3)] public long free;
     [ProtoMember(4)] public long total;
+
     public override string ToString()
     {
         return name + " " + type + " " + free / 1024 / 2014 + "/" + total / 1024 / 1024 + " Free(mb)";
