@@ -1,5 +1,6 @@
 ﻿using ProtoBuf;
 using System;
+using System.IO;
 using System.Net;
 using System.Net.NetworkInformation;
 
@@ -26,9 +27,8 @@ public struct MessageStruct
     [ProtoMember(13)] public uint ram_used;
     [ProtoMember(14)] public uint swap_total;
     [ProtoMember(15)] public uint swap_used;
-    [ProtoMember(16)] public uint[] hdds_total; //combine to a hdd struct with driveletter, name, used, total
-    [ProtoMember(17)] public uint[] hdds_used;
-    // [ProtoMember(1)] //public uint domain_status; //no idea what type yet
+    [ProtoMember(16)] public DriveInfoSlim[] hdds;
+    // [ProtoMember(17)] //public uint domain_status; //no idea what type yet
     [ProtoMember(18)] public uint processes_total;
     //=====networking=====
     [ProtoMember(19)] public NetworkInterfaceSlim[] nics;
@@ -43,14 +43,14 @@ public struct MessageStruct
         Console.WriteLine("ver:" + client_version + " ping:" + ping);
         Console.WriteLine("sec:" + send_frequency);
         Console.WriteLine(hostname);
-        Console.WriteLine(machine_guid);
+        Console.WriteLine(machine_serial);
         Console.WriteLine(os_name);
         Console.WriteLine(cpus);
         Console.WriteLine(ram_used + "/" + ram_total);
         Console.WriteLine(swap_used + "/" + swap_total);
-        for (int i = 0; i < hdds_total.Length; ++i)
+        for (int i = 0; i < hdds.Length; ++i) //FIXME!!!! CRASH HERE!!!
         {
-            Console.WriteLine(hdds_used[i] + "/" + hdds_total[i]);
+            Console.WriteLine(hdds[i]);
         }
         Console.WriteLine("Processes:" + processes_total);
         foreach (NetworkInterfaceSlim nic in nics)
@@ -83,6 +83,18 @@ public struct NetworkInterfaceSlim
     }
 }
 
+[ProtoContract]
+public struct DriveInfoSlim
+{
+    [ProtoMember(1)] public DriveType type;
+    [ProtoMember(2)] public string name;
+    [ProtoMember(3)] public Int64 free;
+    [ProtoMember(4)] public Int64 total;
+    public override string ToString()
+    {
+        return name + " " + type + " " + free / 1024 / 2014 + "/" + total / 1024 / 1024 + " Free(mb)";
+    }
+}
 //need a server options struct
     //check frequency
     //force recheck frequency

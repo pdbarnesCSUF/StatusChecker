@@ -151,6 +151,7 @@ namespace ConsoleNet1
         static void Main(string[] args)
         {
             MessageStruct data = NewReport();
+            data.output();
             //MessageStruct data = new MessageStruct();
             //data.label = "patatoe";
             //Console.Write("Message:");
