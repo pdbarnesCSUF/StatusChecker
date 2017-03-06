@@ -48,14 +48,28 @@ public struct MessageStruct
         Console.WriteLine(cpus);
         Console.WriteLine(ram_used + "/" + ram_total);
         Console.WriteLine(swap_used + "/" + swap_total);
-        for (int i = 0; i < hdds.Length; ++i) //FIXME!!!! CRASH HERE!!!
+        if (hdds != null)
         {
-            Console.WriteLine(hdds[i]);
+            for (int i = 0; i < hdds.Length; ++i) //FIXME!!!! CRASH HERE!!!
+            {
+                Console.WriteLine(hdds[i]);
+            }
+        }
+        else
+        {
+            Console.WriteLine("No drives!?!?");
         }
         Console.WriteLine("Processes:" + processes_total);
-        foreach (NetworkInterfaceSlim nic in nics)
+        if (nics != null)
         {
-            nic.output();
+            foreach (NetworkInterfaceSlim nic in nics)
+            {
+                nic.output();
+            }
+        }
+        else
+        {
+            Console.WriteLine("No NICs!?!?");
         }
         Console.WriteLine("MSG:" + msg);
     }
