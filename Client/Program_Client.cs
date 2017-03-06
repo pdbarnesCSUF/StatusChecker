@@ -73,10 +73,10 @@ namespace ConsoleNet1
             {
                 //======get message info
                 msg.label = label;
-                msg.status = status; //TODO
+                msg.status = status; //TODO define
                 msg.msg_number = MessageCount();
                 msg.time_stamp = DateTime.Now;
-                msg.ping = 999; //TODO
+                msg.ping = 999; //TODO 
                 msg.client_version = client_version;
                 msg.send_frequency = send_frequency;
                 //======get general info
@@ -87,6 +87,7 @@ namespace ConsoleNet1
                 //getting this sucks apparently
                 //CimInstance myDrive = new CimInstance("Win32_OperatingSystem=@");
                 //string serial = (string)os["SerialNumber"];
+                //TODO remove WMI... because inefficient
                 string serial = (string) (from x in new ManagementObjectSearcher("SELECT SerialNumber FROM Win32_OperatingSystem").Get().Cast<ManagementObject>()
                             select x.GetPropertyValue("SerialNumber")).FirstOrDefault();
                 msg.machine_serial = (serial != null) ? serial : "Unknown";
@@ -97,7 +98,7 @@ namespace ConsoleNet1
                 //    result = os["Caption"].ToString();
                 //    break;
                 //}
-                //TODO remove LINQ... because i hate it
+                //TODO remove WMI... because inefficient
                 var name = (from x in new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem").Get().Cast<ManagementObject>()
                             select x.GetPropertyValue("Caption")).FirstOrDefault();
                 msg.os_name = (name != null) ? name.ToString() : "Unknown";

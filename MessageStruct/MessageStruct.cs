@@ -39,7 +39,7 @@ public struct MessageStruct
     public void output()
     {
         Console.WriteLine(label);
-        Console.WriteLine(status + " " + time_stamp + " " + msg_number);
+        Console.WriteLine(status + " " + time_stamp + " #" + msg_number);
         Console.WriteLine("ver:" + client_version + " ping:" + ping);
         Console.WriteLine("send freq:" + send_frequency);
         Console.WriteLine(hostname);
