@@ -24,6 +24,8 @@ namespace ConsoleNet1
         static string label = "potatoe client";
         static uint send_frequency = 1; //in seconds
         static int port = 11001; //different because on same computer
+        static IPAddress srv_address = IPAddress.Parse("127.0.0.1");
+        static int srv_port = 13000;
         //just globals
         static int status = 1;
         const uint client_version = 1;
@@ -78,6 +80,9 @@ namespace ConsoleNet1
                 msg.msg_number = MessageCount();
                 msg.time_stamp = DateTime.Now;
                 msg.ping = 999; //TODO 
+                //--ping
+                Ping pingSender = new Ping();
+                PingReply pingReply = pingSender.Send(srv_address);
                 msg.client_version = client_version;
                 msg.send_frequency = send_frequency;
                 //======get general info
@@ -174,14 +179,14 @@ namespace ConsoleNet1
         //...might as well be lightweight
         //for reliability, red flag if missing several checkins, not just one
         //UDP data
-        static void SendUDP(string address, int srv_port, MessageStruct msg)
+        static void SendUDP( MessageStruct msg)
         {
             // This constructor arbitrarily assigns the local port number.
             UdpClient udpClient = new UdpClient(port);
             try
             {
                 Console.Write("Connecting...");
-                udpClient.Connect(address, srv_port);
+                udpClient.Connect(srv_address, srv_port);
                 Console.WriteLine("gonna send:" + msg.label + ";" + msg.msg);
                 // Sends a message to the host to which you have connected.
                 MemoryStream ms = new MemoryStream();
@@ -193,7 +198,7 @@ namespace ConsoleNet1
                 //udpClientB.Send(sendBytes, sendBytes.Length, "AlternateHostMachineName", 11000);
 
                 //IPEndPoint object will allow us to read datagrams sent from any source.
-                IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Parse(address), 0);
+                IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Parse(srv_address), 0);
 
                 // Blocks until a message returns on this socket from a remote host.
                 Byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
@@ -221,13 +226,16 @@ namespace ConsoleNet1
         }
         static void Main(string[] args)
         {
+            //setup some options...
+            srv_address = IPAddress.Parse("127.0.0.1");
+            srv_port = 13000;
+            label = "testing_client";
+            //get report
             MessageStruct data = NewReport();
+            //output it
             data.output();
-            //MessageStruct data = new MessageStruct();
-            //data.label = "patatoe";
-            //Console.Write("Message:");
-            //data.os_name = Console.ReadLine();
-            //SendUDP("127.0.0.1", 13000, data);
+            //send it
+            //SendUDP(data);
         }
     }
 }
