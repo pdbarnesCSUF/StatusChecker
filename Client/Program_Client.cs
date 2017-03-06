@@ -92,8 +92,14 @@ namespace ConsoleNet1
                 msg.send_frequency = send_frequency;
                 //======get general info
                 //---hostname
+#if !NDEBUG
+                Console.WriteLine("Getting Hostname...");
+#endif
                 msg.hostname = System.Environment.MachineName;
                 //---guid
+#if !NDEBUG
+                Console.WriteLine("Getting Serial...");
+#endif
                 //turns out that ITS NOT A GUID!!!!
                 //getting this sucks apparently
                 //CimInstance myDrive = new CimInstance("Win32_OperatingSystem=@");
@@ -103,6 +109,9 @@ namespace ConsoleNet1
                             select x.GetPropertyValue("SerialNumber")).FirstOrDefault();
                 msg.machine_serial = (serial != null) ? serial : "Unknown";
                 //---os version
+#if !NDEBUG
+                Console.WriteLine("Getting OSversion...");
+#endif
                 //ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem");
                 //foreach (ManagementObject os in searcher.Get())
                 //{
@@ -114,6 +123,9 @@ namespace ConsoleNet1
                             select x.GetPropertyValue("Caption")).FirstOrDefault();
                 msg.os_name = (name != null) ? name.ToString() : "Unknown";
                 //---cpus
+#if !NDEBUG
+                Console.WriteLine("Getting Cpus...");
+#endif
                 //http://stackoverflow.com/questions/9777661/returning-cpu-usage-in-wmi-using-c-sharp
                 ManagementObjectSearcher searcher = new ManagementObjectSearcher("select * from Win32_PerfFormattedData_PerfOS_Processor");
                 ManagementObjectCollection cpus_collection = searcher.Get();
@@ -125,6 +137,9 @@ namespace ConsoleNet1
                     msg.cpus[i] = (ushort)(ulong)(cpus[i]["PercentProcessorTime"]); //raw is Int64
                 }
                 //---ram
+#if !NDEBUG
+                Console.WriteLine("Getting Memory...");
+#endif
                 MEMORYSTATUSEX memStatus = new MEMORYSTATUSEX();
                 if (GlobalMemoryStatusEx(memStatus))
                 {
@@ -135,6 +150,9 @@ namespace ConsoleNet1
                 }
 
                 //---get hdds
+#if !NDEBUG
+                Console.WriteLine("Getting Drives...");
+#endif
                 DriveInfo[] drives = DriveInfo.GetDrives();
                 msg.drives = new DriveInfoSlim[drives.Length];
                 for (int i = 0; i < drives.Length; ++i)
@@ -148,9 +166,15 @@ namespace ConsoleNet1
                     }
                 }
                 //---processes
+#if !NDEBUG
+                Console.WriteLine("Getting Processes...");
+#endif
                 msg.processes_total = Process.GetProcesses().Length;
 
                 //======get network info
+#if !NDEBUG
+                Console.WriteLine("Getting NICs...");
+#endif
                 //http://stackoverflow.com/questions/850650/reliable-method-to-get-machines-mac-address-in-c-sharp#7661829
                 NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
                 msg.nics = new NetworkInterfaceSlim[nics.Length];
