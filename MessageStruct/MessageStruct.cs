@@ -123,9 +123,15 @@ public struct DriveInfoSlim
 [ProtoContract]
 public struct ClientStatus
 {
-    public string label;
-    public MessageStruct report;
-    public 
+    [ProtoMember(1)] public string label;
+    [ProtoMember(2)] public MessageStruct report;
+    [ProtoMember(3)] public ulong report_last;
+    [ProtoMember(4)] public ulong report_received;
+    [ProtoMember(5)] public ulong report_lost;
+    public override string ToString()
+    {
+        return label + report_lost + ":" + report_received;
+    }
 }
 //need a server options struct
     //check frequency
