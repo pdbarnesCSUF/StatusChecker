@@ -15,7 +15,7 @@ public struct MessageStruct
     [ProtoMember(2)]  public int status; //ENUM'd... in THIS? file?
     [ProtoMember(3)]  public uint msg_number; //msg number, used to detect missed packets
     [ProtoMember(4)]  public DateTime time_stamp; //when generated
-    [ProtoMember(5)]  public uint ping; //ping to server result, can be used to detect one-way network problems
+    [ProtoMember(5)]  public long ping; //ping to server result, can be used to detect one-way network problems
     [ProtoMember(6)]  public uint client_version;
     [ProtoMember(7)]  public uint send_frequency; //in seconds, its just one option anyways, put here
     //=====general=====

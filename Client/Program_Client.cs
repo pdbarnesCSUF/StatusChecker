@@ -83,7 +83,12 @@ namespace ConsoleNet1
                 //--ping
                 Ping pingSender = new Ping();
                 PingReply pingReply = pingSender.Send(srv_address);
+                if (pingReply.Status == IPStatus.Success)
+                    msg.ping = pingReply.RoundtripTime;
+                else
+                    msg.ping = -1;
                 msg.client_version = client_version;
+
                 msg.send_frequency = send_frequency;
                 //======get general info
                 //---hostname
@@ -198,7 +203,7 @@ namespace ConsoleNet1
                 //udpClientB.Send(sendBytes, sendBytes.Length, "AlternateHostMachineName", 11000);
 
                 //IPEndPoint object will allow us to read datagrams sent from any source.
-                IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Parse(srv_address), 0);
+                IPEndPoint RemoteIpEndPoint = new IPEndPoint(srv_address, 0);
 
                 // Blocks until a message returns on this socket from a remote host.
                 Byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
@@ -216,7 +221,7 @@ namespace ConsoleNet1
             }
             catch (SocketException e)
             {
-                Console.WriteLine("Could not connect to server (" + address + ":" + srv_port + ")");
+                Console.WriteLine("Could not connect to server (" + srv_address + ":" + srv_port + ")");
                 Console.WriteLine(e.Message);
             }
             catch (Exception e)
