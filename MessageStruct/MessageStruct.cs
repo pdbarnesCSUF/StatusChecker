@@ -13,7 +13,7 @@ public struct MessageStruct
     //=====message=====
     [ProtoMember(1)]  public string label; //doi a personel label
     [ProtoMember(2)]  public int status; //ENUM'd... in THIS? file?
-    [ProtoMember(3)]  public uint msg_number; //msg number, used to detect missed packets
+    [ProtoMember(3)]  public ulong msg_number; //msg number, used to detect missed packets
     [ProtoMember(4)]  public DateTime time_stamp; //when generated
     [ProtoMember(5)]  public long ping; //ping to server result, can be used to detect one-way network problems
     [ProtoMember(6)]  public uint client_version;
@@ -118,6 +118,14 @@ public struct DriveInfoSlim
     {
         return name + " " + type + " " + free / 1024 / 2014 + "/" + total / 1024 / 1024 + " Free(mb)";
     }
+}
+
+[ProtoContract]
+public struct ClientStatus
+{
+    public string label;
+    public MessageStruct report;
+    public 
 }
 //need a server options struct
     //check frequency

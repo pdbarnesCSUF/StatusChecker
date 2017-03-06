@@ -29,8 +29,8 @@ namespace ConsoleNet1
         //just globals
         static int status = 1;
         const uint client_version = 1;
-        static uint messagesGenerated = 0;
-        static uint MessageCount()
+        static ulong messagesGenerated = 0;
+        static ulong MessageCount()
         {
             ++messagesGenerated;
             return messagesGenerated;
