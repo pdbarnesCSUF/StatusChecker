@@ -10,7 +10,7 @@ using System.Net.NetworkInformation;
 //has some networkstuff and some domain stuff in the code
 //TODO stop calling this a message.... a report maybe?
 [ProtoContract]
-public struct MessageStruct //TODO rename to MessageClient
+public struct MessageClient
 {
     //=====message=====
     [ProtoMember(1)]  public string label; //doi a personel label
@@ -129,7 +129,7 @@ public struct ClientStatus
 {
     [ProtoMember(1)] public string label;
     [ProtoMember(2)] public string machine_serial; //used to uniquely identify the computer
-    [ProtoMember(3)] public MessageStruct report;
+    [ProtoMember(3)] public MessageClient report;
     [ProtoMember(4)] public ulong report_last;
     [ProtoMember(5)] public ulong report_received;
     [ProtoMember(6)] public ulong report_lost;

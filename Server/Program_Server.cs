@@ -16,7 +16,7 @@ namespace Server
         static UdpClient udpClient = null;
         static IPEndPoint RemoteIpEndPoint = null;
         //need a container for clients
-            //MessageStruct
+            //MessageClient
             //optionsstruct
         //need a container for GUI
             //identifier struct
@@ -47,7 +47,7 @@ namespace Server
                     // Sends a message to the host to which you have connected.
                     
                     MemoryStream ms = new MemoryStream(receiveBytes);
-                    MessageStruct msg = (MessageStruct) Serializer.Deserialize<MessageStruct>(ms);
+                    MessageClient msg = (MessageClient) Serializer.Deserialize<MessageClient>(ms);
 
                     // Uses the IPEndPoint object to determine which of these two hosts responded.
                     Console.WriteLine(msg.label + " said " +
