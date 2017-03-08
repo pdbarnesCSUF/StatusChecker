@@ -25,8 +25,8 @@ MessageClientServer_Client         |MessageServerClient_Command
              ---inside---
 list of clients
 list of GUIs
-force recheck of clients
-force recheck of GUIs
+frequency force recheck of clients
+frequency force recheck of GUIs
 
 
 
@@ -34,7 +34,7 @@ force recheck of GUIs
 *****  OUT to GUI *****            |*****IN from GUI*****
 MessageServerGUI_Server            |MessageGUIServer_GUI    
 MessageServerGUI_Clients           |MessageGUIServer_Command
-                                   |                        
+MessageServerGUI_GUIs              |                        
                                    |                        
                                    |                        
                                    |                        

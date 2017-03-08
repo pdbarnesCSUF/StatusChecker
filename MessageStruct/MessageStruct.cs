@@ -10,7 +10,7 @@ using System.Net.NetworkInformation;
 //has some networkstuff and some domain stuff in the code
 //TODO stop calling this a message.... a report maybe?
 [ProtoContract]
-public struct MessageClient
+public struct MessagerClientServer_Client
 {
     //=====message=====
     [ProtoMember(1)]  public string label; //doi a personel label
@@ -129,7 +129,7 @@ public struct ClientStatus
 {
     [ProtoMember(1)] public string label;
     [ProtoMember(2)] public string machine_serial; //used to uniquely identify the computer
-    [ProtoMember(3)] public MessageClient report;
+    [ProtoMember(3)] public MessagerClientServer_Client report;
     [ProtoMember(4)] public ulong report_last;
     [ProtoMember(5)] public ulong report_received;
     [ProtoMember(6)] public ulong report_lost;
@@ -141,23 +141,28 @@ public struct ClientStatus
 
 //a single one, sent from server to GUI
 [ProtoContract]
-public struct MessageClientList
+public struct MessageServerGUI_Clients
 {
     [ProtoMember(1)] public List<ClientStatus> client_list;
 }
 //one static on server if use as options
 //sent out to other GUIs if they ask for it.
 [ProtoContract]
-public struct MessageServer
+public struct MessageServerGUI_Server
 {
     [ProtoMember(1)] public int check_freq_client; //if client doesnt talk after x time, manually ask for a update
-    [ProtoMember(2)] public List<MessageGUI> guis;
+}
+
+[ProtoContract]
+public struct MessageServerGUI_GUIs
+{
+    [ProtoMember(1)] public List<MessageGUIServer_GUI> guis;
 }
 
 //on the server, one per connected gui, inside of MessageServer
 //on the gui, just one static if used as options
 [ProtoContract]
-public struct MessageGUI
+public struct MessageGUIServer_GUI
 {
     [ProtoMember(1)] public string label; //personal label set by gui
     [ProtoMember(2)] public string username; //username of the running user - not editable
