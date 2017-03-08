@@ -48,16 +48,16 @@ namespace Server
                     
                     MemoryStream ms = new MemoryStream(receiveBytes);
                     MessageClient msg = (MessageClient) Serializer.Deserialize<MessageClient>(ms);
-
                     // Uses the IPEndPoint object to determine which of these two hosts responded.
+                    Console.WriteLine("=====");
                     Console.WriteLine(msg.label + " said " +
                                                  msg.msg);
                     Console.WriteLine("Sent from " +
                                                 RemoteIpEndPoint.Address.ToString() +
                                                 " on their port:" +
                                                 RemoteIpEndPoint.Port.ToString());
-                    Console.WriteLine("=====objdump=====");
-                    msg.output();
+                    //Console.WriteLine("=====objdump=====");
+                    //msg.output();
                     //send back
                     Byte[] sendBytes = Encoding.ASCII.GetBytes("Hi " +
                                                 RemoteIpEndPoint.Address.ToString() +
