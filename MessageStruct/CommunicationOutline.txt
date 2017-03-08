@@ -1,0 +1,43 @@
+﻿Message<FromWho><ToWho>_<AboutWhat>
+==========CLIENT APPLICATION==========
+             ---inside---
+MessageClient static_report //constant report info
+IPAddress     srv_ip
+int           srv_port
+int           port          //client port
+
+
+
+
+
+*****OUT to server*****            |*****IN from server*****
+//a fresh update report            |//change an option on client
+MessageClientServer_Client         |MessageServerClient_Command                        
+                                   |                        
+                                   |                        
+                                   |                        
+                                   |                        
+                                   |                        
+                                   |                        
+                                   |                        
+                                   |                        
+==========SERVER APPLICATION==========
+             ---inside---
+list of clients
+list of GUIs
+force recheck of clients
+force recheck of GUIs
+
+
+
+
+*****  OUT to GUI *****            |*****IN from GUI*****
+MessageServerGUI_Server            |MessageGUIServer_GUI    
+MessageServerGUI_Clients           |MessageGUIServer_Command
+                                   |                        
+                                   |                        
+                                   |                        
+                                   |                        
+==========GUI APPLICATION==========
+             ---inside---
+list of clients
