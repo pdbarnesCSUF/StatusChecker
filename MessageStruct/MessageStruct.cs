@@ -1,14 +1,16 @@
 ﻿//http://stackoverflow.com/questions/400135/listt-or-ilistt an interesting but ultimately confusing read
-//rename file/projectto be more.... accurate
+//https://msdn.microsoft.com/en-us/library/system.net.networkinformation.networkinterface(v=vs.110).aspx
+//has some networkstuff and some domain stuff in the code
+
+//TODO rename file/projectto be more.... accurate
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.NetworkInformation;
 
-//https://msdn.microsoft.com/en-us/library/system.net.networkinformation.networkinterface(v=vs.110).aspx
-//has some networkstuff and some domain stuff in the code
-//TODO stop calling this a message.... a report maybe?
+
+
 [ProtoContract]
 public struct MessagerClientServer_Client
 {
