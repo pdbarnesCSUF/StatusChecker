@@ -12,27 +12,31 @@ namespace Server
 {
     class Program_Server
     {
-        static int port = 13000;
-        static UdpClient udpClient = null;
-        static IPEndPoint RemoteIpEndPoint = null;
+        static int portClients = 13000;
+        static UdpClient udpClients = null;
+        static IPEndPoint remoteIpClients = null;
+
+        static int portGUIs = 13002;            //for later
+        static UdpClient udpGUIs = null;        //for later
+        static IPEndPoint remoteIpGUIs = null;  //for later
         //need a container for clients
-            //MessagerClientServer_Client
-            //optionsstruct
+        static MessageServerGUI_Clients clients;
+        
         //need a container for GUI
-            //identifier struct
-            //how often to push for updates
-            //want realtime updates bool
+        //identifier struct
+        //how often to push for updates
+        //want realtime updates bool
 
         //UDP string
         static void StartServer()
         {
-            StartServer(port);
+            StartServer(portClients);
         }
         static void StartServer(int srv_port)
         {
-            udpClient = new UdpClient(srv_port);
+            udpClients = new UdpClient(srv_port);
             //IPEndPoint object will allow us to read datagrams sent from any source. ish
-            RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, port);
+            remoteIpClients = new IPEndPoint(IPAddress.Any, portClients);
         }
         static void Main(string[] args)
         {
@@ -43,26 +47,44 @@ namespace Server
                 Console.WriteLine("Waiting for messages...");
                 while (true)
                 {
-                    Byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
+                    Byte[] receiveBytes = udpClients.Receive(ref remoteIpClients);
                     // Sends a message to the host to which you have connected.
                     
                     MemoryStream ms = new MemoryStream(receiveBytes);
                     MessagerClientServer_Client msg = (MessagerClientServer_Client) Serializer.Deserialize<MessagerClientServer_Client>(ms);
                     // Uses the IPEndPoint object to determine which of these two hosts responded.
+                    //msg received
+                    //check serial against serials we have
+                    //if new
+                        //add to list
+                        //output - "new client"
+                    //if already have
+                        //update report
+                        //if msgtype = reportpush
+                            //update report_last
+                            //update report_received
+                            //update report_lost
+                            //output - "known client reported"
+                        //if msgtype = new
+                            //update report_last
+                            //reset report_received
+                            //reset report_lost
+                            //output - "known client started"
+                    
                     Console.WriteLine("=====");
                     Console.WriteLine(msg.label + " said " +
                                                  msg.msg);
                     Console.WriteLine("Sent from " +
-                                                RemoteIpEndPoint.Address.ToString() +
+                                                remoteIpClients.Address.ToString() +
                                                 " on their port:" +
-                                                RemoteIpEndPoint.Port.ToString());
+                                                remoteIpClients.Port.ToString());
                     //Console.WriteLine("=====objdump=====");
                     //msg.output();
                     //send back
                     Byte[] sendBytes = Encoding.ASCII.GetBytes("Hi " +
-                                                RemoteIpEndPoint.Address.ToString() +
+                                                remoteIpClients.Address.ToString() +
                                                 " Got your messsage!");
-                    udpClient.Send(sendBytes, sendBytes.Length, RemoteIpEndPoint);
+                    udpClients.Send(sendBytes, sendBytes.Length, remoteIpClients);
                 }
                 
             }
@@ -72,7 +94,7 @@ namespace Server
             }
             finally
             {
-                udpClient.Close();
+                udpClients.Close();
             }
         }//end of main
     }

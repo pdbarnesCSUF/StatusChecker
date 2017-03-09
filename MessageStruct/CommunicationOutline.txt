@@ -23,6 +23,8 @@ MessageClientServer_Client         |MessageServerClient_Command (save for later)
                                    |                        
 ==========SERVER APPLICATION==========
              ---inside---
+int			port_clients
+int			port_guis
 list of clients
 list of GUIs
 frequency force recheck of clients
