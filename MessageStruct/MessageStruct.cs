@@ -9,14 +9,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.NetworkInformation;
 
-
+public enum MessageTypes
+{
+    MSG_ERROR,         //i screwed up
+    MSG_UPDATEPUSH,    //i have an update
+    MSG_UPDATEREQUEST, //i want an update!
+    MSG_COMMAND,       //run this command (string in msg) (after implementing auth)
+    MSG_MESSAGE,       //just saying some custom text (mostly debugging)
+    MSG_NEW,           //My first message to you!
+    MSG_CLOSING,       //Im going away, bye
+    MSG_TOTAL
+}
 
 [ProtoContract]
 public struct MessagerClientServer_Client
 {
     //=====message=====
-    [ProtoMember(1)]  public string label; //doi a personel label
-    [ProtoMember(2)]  public int status; //ENUM'd... in THIS? file?
+    [ProtoMember(1)]  public MessageTypes msgtype;
+    [ProtoMember(2)]  public string label; //doi a personel label
     [ProtoMember(3)]  public ulong msg_number; //msg number, used to detect missed packets
     [ProtoMember(4)]  public DateTime time_stamp; //when generated
     [ProtoMember(5)]  public long ping; //ping to server result, can be used to detect one-way network problems
@@ -43,7 +53,7 @@ public struct MessagerClientServer_Client
     public void output()
     {
         Console.WriteLine(label);
-        Console.WriteLine(status + " " + time_stamp + " #" + msg_number);
+        Console.WriteLine(msgtype + " " + time_stamp + " #" + msg_number);
         Console.WriteLine("ver:" + client_version + " ping:" + ping);
         Console.WriteLine("send freq:" + send_frequency);
         Console.WriteLine(hostname);
@@ -129,12 +139,13 @@ public struct DriveInfoSlim
 [ProtoContract]
 public struct ClientStatus
 {
-    [ProtoMember(1)] public string label;
-    [ProtoMember(2)] public string machine_serial; //used to uniquely identify the computer
-    [ProtoMember(3)] public MessagerClientServer_Client report;
-    [ProtoMember(4)] public ulong report_last;
-    [ProtoMember(5)] public ulong report_received;
-    [ProtoMember(6)] public ulong report_lost;
+    [ProtoMember(1)] public MessageTypes msgtype;
+    [ProtoMember(2)] public string label;
+    [ProtoMember(3)] public string machine_serial; //used to uniquely identify the computer
+    [ProtoMember(4)] public MessagerClientServer_Client report;
+    [ProtoMember(5)] public ulong report_last;
+    [ProtoMember(6)] public ulong report_received;
+    [ProtoMember(7)] public ulong report_lost;
     public override string ToString()
     {
         return label + report_lost + ":" + report_received;
@@ -145,20 +156,23 @@ public struct ClientStatus
 [ProtoContract]
 public struct MessageServerGUI_Clients
 {
-    [ProtoMember(1)] public List<ClientStatus> client_list;
+    [ProtoMember(1)] public MessageTypes msgtype;
+    [ProtoMember(2)] public List<ClientStatus> client_list;
 }
 //one static on server if use as options
 //sent out to other GUIs if they ask for it.
 [ProtoContract]
 public struct MessageServerGUI_Server
 {
-    [ProtoMember(1)] public int check_freq_client; //if client doesnt talk after x time, manually ask for a update
+    [ProtoMember(1)] public MessageTypes msgtype;
+    [ProtoMember(2)] public int check_freq_client; //if client doesnt talk after x time, manually ask for a update
 }
 
 [ProtoContract]
 public struct MessageServerGUI_GUIs
 {
-    [ProtoMember(1)] public List<MessageGUIServer_GUI> guis;
+    [ProtoMember(1)] public MessageTypes msgtype;
+    [ProtoMember(2)] public List<MessageGUIServer_GUI> guis;
 }
 
 //on the server, one per connected gui, inside of MessageServer
@@ -166,9 +180,10 @@ public struct MessageServerGUI_GUIs
 [ProtoContract]
 public struct MessageGUIServer_GUI
 {
-    [ProtoMember(1)] public string label; //personal label set by gui
-    [ProtoMember(2)] public string username; //username of the running user - not editable
-    [ProtoMember(3)] public string hostname; //hostname of gui - not editable
-    [ProtoMember(4)] public string ip; //ipaddress
-    [ProtoMember(5)] public string mac; //physical MAC address
+    [ProtoMember(1)] public MessageTypes msgtype;
+    [ProtoMember(2)] public string label; //personal label set by gui
+    [ProtoMember(3)] public string username; //username of the running user - not editable
+    [ProtoMember(4)] public string hostname; //hostname of gui - not editable
+    [ProtoMember(5)] public string ip; //ipaddress
+    [ProtoMember(6)] public string mac; //physical MAC address
 }

@@ -12,7 +12,7 @@ int           port          //client port
 
 *****OUT to server*****            |*****IN from server*****
 //a fresh update report            |//change an option on client
-MessageClientServer_Client         |MessageServerClient_Command                        
+MessageClientServer_Client         |MessageServerClient_Command (save for later)                        
                                    |                        
                                    |                        
                                    |                        
@@ -33,7 +33,7 @@ frequency force recheck of GUIs
 
 *****  OUT to GUI *****            |*****IN from GUI*****
 MessageServerGUI_Server            |MessageGUIServer_GUI    
-MessageServerGUI_Clients           |MessageGUIServer_Command
+MessageServerGUI_Clients           |MessageGUIServer_Command (save for later)
 MessageServerGUI_GUIs              |                        
                                    |                        
                                    |                        

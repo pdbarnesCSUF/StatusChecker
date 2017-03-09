@@ -27,7 +27,6 @@ namespace ConsoleNet1
         static IPAddress srv_address = IPAddress.Parse("127.0.0.1");
         static int srv_port = 13000;
         //just globals
-        static int status = 1;
         const uint client_version = 1;
         static ulong messagesGenerated = 0;
         static ulong MessageCount()
@@ -76,7 +75,7 @@ namespace ConsoleNet1
             {
                 //======get message info
                 msg.label = label;
-                msg.status = status; //TODO define
+                msg.msgtype = MessageTypes.MSG_NEW; //TODO define
                 msg.msg_number = MessageCount();
                 msg.time_stamp = DateTime.Now;
                 msg.ping = 999; //TODO 
@@ -200,7 +199,7 @@ namespace ConsoleNet1
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
-                msg.status = 0; //TODO ERROR status
+                msg.msgtype = MessageTypes.MSG_ERROR; //TODO ERROR status
             }
             return msg;
         }
