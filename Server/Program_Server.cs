@@ -51,7 +51,7 @@ namespace Server
                     // Sends a message to the host to which you have connected.
                     
                     MemoryStream ms = new MemoryStream(receiveBytes);
-                    MessagerClientServer_Client msg = (MessagerClientServer_Client) Serializer.Deserialize<MessagerClientServer_Client>(ms);
+                    MessageClientServer_Client msg = (MessageClientServer_Client) Serializer.Deserialize<MessageClientServer_Client>(ms);
                     // Uses the IPEndPoint object to determine which of these two hosts responded.
                     //msg received
                     //check serial against serials we have

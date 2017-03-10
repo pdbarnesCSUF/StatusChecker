@@ -68,9 +68,9 @@ namespace ConsoleNet1
         //============ borrowed END
 
 
-        static MessagerClientServer_Client NewReport()
+        static MessageClientServer_Client NewReport()
         {
-            MessagerClientServer_Client msg = new MessagerClientServer_Client();
+            MessageClientServer_Client msg = new MessageClientServer_Client();
             try
             {
                 //======get message info
@@ -207,7 +207,7 @@ namespace ConsoleNet1
         //...might as well be lightweight
         //for reliability, red flag if missing several checkins, not just one
         //UDP data
-        static void SendUDP( MessagerClientServer_Client msg)
+        static void SendUDP( MessageClientServer_Client msg)
         {
             // This constructor arbitrarily assigns the local port number.
             UdpClient udpClient = new UdpClient(port);
@@ -259,7 +259,7 @@ namespace ConsoleNet1
             srv_port = 13000;
             label = "testing_client";
             //get report
-            MessagerClientServer_Client data = NewReport();
+            MessageClientServer_Client data = NewReport();
             //msg
             Console.Write("MESSAGE?:");
             data.msg = Console.ReadLine();
