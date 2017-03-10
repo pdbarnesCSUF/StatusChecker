@@ -20,7 +20,7 @@ namespace Server
         static UdpClient udpGUIs = null;        //for later
         static IPEndPoint remoteIpGUIs = null;  //for later
         //need a container for clients
-        static MessageServerGUI_Clients clients;
+        static MessageServerGUI_Clients clients; //has a list inside
         
         //need a container for GUI
         //identifier struct
@@ -55,22 +55,34 @@ namespace Server
                     // Uses the IPEndPoint object to determine which of these two hosts responded.
                     //msg received
                     //check serial against serials we have
-                    //if new
-                        //add to list
-                        //output - "new client"
-                    //if already have
-                        //update report
-                        //if msgtype = reportpush
-                            //update report_last
-                            //update report_received
-                            //update report_lost
-                            //output - "known client reported"
-                        //if msgtype = new
-                            //update report_last
-                            //reset report_received
-                            //reset report_lost
-                            //output - "known client started"
-                    
+                    //http://stackoverflow.com/questions/9854917/how-can-i-find-a-specific-element-in-a-listt
+                    int idx = clients.client_list.FindIndex(x => x.machine_serial == msg.machine_serial);
+                    if (idx < 0) //if new
+                    {
+                        clients.client_list.Add(new ClientStatus(msg));
+                        if (msg.msgtype == MessageTypes.MSG_NEW)
+                            Console.WriteLine("New client - Started");
+                        else if (msg.msgtype == MessageTypes.MSG_UPDATEPUSH)
+                            Console.WriteLine("New client - reported");
+                        else
+                            Console.WriteLine("New client - ERRORS!!" + msg.msgtype);
+                    }
+                    else //if update
+                    {
+                        ulong missed = clients.client_list[idx].Update(msg);
+                        if (msg.msgtype == MessageTypes.MSG_UPDATEPUSH)
+                            Console.Write("Known client - reported");
+                        else if (msg.msgtype == MessageTypes.MSG_NEW)
+                            Console.Write("Known client - Started");
+                        else
+                            Console.Write("Known client - ERRORS!!" + msg.msgtype);
+                        //report errors
+                        if (missed == 0)
+                            Console.WriteLine(" Lost:" + missed);
+                        else
+                            Console.WriteLine();
+                    }
+
                     Console.WriteLine("=====");
                     Console.WriteLine(msg.label + " said " +
                                                  msg.msg);

@@ -143,12 +143,35 @@ public struct ClientStatus
     [ProtoMember(2)] public string label;
     [ProtoMember(3)] public string machine_serial; //used to uniquely identify the computer
     [ProtoMember(4)] public MessagerClientServer_Client report;
-    [ProtoMember(5)] public ulong report_last;
-    [ProtoMember(6)] public ulong report_received;
-    [ProtoMember(7)] public ulong report_lost;
+    [ProtoMember(5)] public ulong report_last;      //ID of it
+    [ProtoMember(6)] public ulong report_received;  //quantity
+    [ProtoMember(7)] public ulong report_lost;      //quantity total
     public override string ToString()
     {
         return label + report_lost + ":" + report_received;
+    }
+    public ClientStatus(MessagerClientServer_Client msg)
+    {
+        msgtype = MessageTypes.MSG_NEW;
+        label = msg.label;
+        machine_serial = msg.machine_serial;
+        report = msg;
+        report_last = msg.msg_number;
+        report_lost = 0;
+        report_received = 1;
+    }
+    //returns the amount of lost messages since last time (current - last)
+    //assumes input is matching
+    public ulong Update(MessagerClientServer_Client msg)
+    {
+        //first get lost
+        ulong lost = msg.msg_number - report_last;
+        report = msg;
+        ++report_received;
+        report_last = msg.msg_number;
+        msgtype = msg.msgtype;
+        report_lost += lost;
+        return lost;
     }
 }
 
@@ -158,6 +181,37 @@ public struct MessageServerGUI_Clients
 {
     [ProtoMember(1)] public MessageTypes msgtype;
     [ProtoMember(2)] public List<ClientStatus> client_list;
+    //add/update, will check
+    public ulong Input(MessagerClientServer_Client msg)
+    {
+        //find, if new
+        int idx = client_list.FindIndex(x => x.machine_serial == msg.machine_serial);
+        if (idx < 0)
+        {
+            client_list.Add(new ClientStatus(msg));
+            return 0;
+        }
+        else //if update
+        {
+            return client_list[idx].Update(msg);
+        }
+    }
+    //just add, dont check
+    public void Add(ClientStatus cs)
+    {
+        client_list.Add(cs);
+    }
+    public void Add(MessagerClientServer_Client msg)
+    {
+        client_list.Add(new ClientStatus(msg));
+    }
+    //update existing
+    public ulong Update(int idx, MessagerClientServer_Client msg)
+    {
+        return client_list[idx].Update(msg);
+    }
+    
+
 }
 //one static on server if use as options
 //sent out to other GUIs if they ask for it.
