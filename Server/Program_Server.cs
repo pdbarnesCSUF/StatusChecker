@@ -20,7 +20,7 @@ namespace Server
         static UdpClient udpGUIs = null;        //for later
         static IPEndPoint remoteIpGUIs = null;  //for later
         //need a container for clients
-        static MessageServerGUI_Clients clients; //has a list inside
+        static MessageServerGUI_Clients clients = new MessageServerGUI_Clients(); //has a list inside
         
         //need a container for GUI
         //identifier struct
