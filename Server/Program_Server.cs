@@ -16,9 +16,9 @@ namespace Server
         static UdpClient udpClients = null;
         static IPEndPoint remoteIpClients = null;
 
-        static int portGUIs = 13002;            //for later
-        static UdpClient udpGUIs = null;        //for later
-        static IPEndPoint remoteIpGUIs = null;  //for later
+        //static int portGUIs = 13002;            //for later
+        //static UdpClient udpGUIs = null;        //for later
+        //static IPEndPoint remoteIpGUIs = null;  //for later
         //need a container for clients
         static MessageServerGUI_Clients clients = new MessageServerGUI_Clients(); //has a list inside
         
