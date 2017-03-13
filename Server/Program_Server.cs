@@ -20,7 +20,7 @@ namespace Server
         //static UdpClient udpGUIs = null;        //for later
         //static IPEndPoint remoteIpGUIs = null;  //for later
         //need a container for clients
-        static MessageServerGUI_Clients clients = new MessageServerGUI_Clients(); //has a list inside
+        static MessageServerGUI_Clients clients = new MessageServerGUI_Clients(MessageTypes.MSG_NEW); //has a list inside
         
         //need a container for GUI
         //identifier struct
@@ -56,6 +56,12 @@ namespace Server
                     //msg received
                     //check serial against serials we have
                     //http://stackoverflow.com/questions/9854917/how-can-i-find-a-specific-element-in-a-listt
+                    //TESTEST
+                    clients.client_list.Add(new ClientStatus(msg));
+
+
+                    Console.WriteLine("done");
+                    //END
                     int idx = clients.client_list.FindIndex(x => x.machine_serial == msg.machine_serial);
                     if (idx < 0) //if new
                     {

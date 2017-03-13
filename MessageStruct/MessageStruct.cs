@@ -181,6 +181,19 @@ public struct MessageServerGUI_Clients
 {
     [ProtoMember(1)] public MessageTypes msgtype;
     [ProtoMember(2)] public List<ClientStatus> client_list;
+
+    //lazy default consturctor
+    public MessageServerGUI_Clients(MessageTypes i = MessageTypes.MSG_NEW)
+    {
+        //i really dont care about the int, its just for lazy ppl to initalize without calling
+        msgtype = MessageTypes.MSG_NEW;
+        client_list = new List<ClientStatus>();
+    }
+    public void Initialize()
+    {
+        msgtype = MessageTypes.MSG_NEW;
+        client_list = new List<ClientStatus>();
+    }
     //add/update, will check
     public ulong Input(MessageClientServer_Client msg)
     {
