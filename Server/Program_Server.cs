@@ -56,13 +56,11 @@ namespace Server
                     //msg received
                     //check serial against serials we have
                     //http://stackoverflow.com/questions/9854917/how-can-i-find-a-specific-element-in-a-listt
-                    //TESTEST
-                    clients.client_list.Add(new ClientStatus(msg));
-
-
+                    
                     Console.WriteLine("done");
                     //END
                     int idx = clients.client_list.FindIndex(x => x.machine_serial == msg.machine_serial);
+                    //Console.WriteLine("idx:" + idx);
                     if (idx < 0) //if new
                     {
                         clients.client_list.Add(new ClientStatus(msg));
