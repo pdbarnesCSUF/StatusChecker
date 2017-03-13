@@ -75,16 +75,11 @@ namespace Server
                     {
                         ulong missed = clients.client_list[idx].Update(msg);
                         if (msg.msgtype == MessageTypes.MSG_UPDATEPUSH)
-                            Console.Write("Known client - reported");
+                            Console.Write("Known client - reported" + " Lost:" + missed);
                         else if (msg.msgtype == MessageTypes.MSG_NEW)
                             Console.Write("Known client - Started");
                         else
-                            Console.Write("Known client - ERRORS!!" + msg.msgtype);
-                        //report errors
-                        if (missed == 0)
-                            Console.WriteLine(" Lost:" + missed);
-                        else
-                            Console.WriteLine();
+                            Console.Write("Known client - ERRORS!!" + msg.msgtype + " Lost:" + missed);
                     }
 
                     Console.WriteLine("=====");
