@@ -56,10 +56,9 @@ namespace Server
                     //msg received
                     //check serial against serials we have
                     //http://stackoverflow.com/questions/9854917/how-can-i-find-a-specific-element-in-a-listt
-                    
-                    Console.WriteLine("done");
-                    //END
+
                     int idx = clients.client_list.FindIndex(x => x.machine_serial == msg.machine_serial);
+                    Console.WriteLine("=====");
                     //Console.WriteLine("idx:" + idx);
                     if (idx < 0) //if new
                     {
@@ -80,11 +79,8 @@ namespace Server
                             Console.Write("Known client - Started");
                         else
                             Console.Write("Known client - ERRORS!!" + msg.msgtype + " Lost:" + missed);
-                    }
-
-                    Console.WriteLine("=====");
-                    Console.WriteLine(msg.label + " said " +
-                                                 msg.msg);
+                    }                    
+                    Console.WriteLine(msg.label + " said " + msg.msg);
                     Console.WriteLine("Sent from " +
                                                 remoteIpClients.Address.ToString() +
                                                 " on their port:" +
