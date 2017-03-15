@@ -3,7 +3,9 @@
 //http://stackoverflow.com/questions/4314630/managementobject-class-not-showing-up-in-system-management-namespace
 //https://msdn.microsoft.com/en-us/library/windows/desktop/aa394239(v=vs.85).aspx Win32_OperatingSystem
 //https://msdn.microsoft.com/en-us/library/windows/desktop/aa393244(v=vs.85).aspx getting WMI
+//https://msdn.microsoft.com/en-us/library/system.net.sockets.udpclient.beginreceive(v=vs.110).aspx
 //Console.WriteLine(cpus[i]["PercentProcessorTime"].GetType().Name); .GetType().Name to get name of type
+
 using ProtoBuf;
 using System;
 using System.Diagnostics;
@@ -35,7 +37,8 @@ namespace ConsoleNet1
             return messagesGenerated;
         }
         //TODO make a global "static" as in.. for things that dont change, Message struct to only update whats necessary
-        //==========borrowed code
+        static MessageClientServer_Client msgStatic = new MessageClientServer_Client();
+            //==========borrowed code
         //http://stackoverflow.com/questions/105031/how-do-you-get-total-amount-of-ram-the-computer-has#105084
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         private class MEMORYSTATUSEX
@@ -66,35 +69,112 @@ namespace ConsoleNet1
             }
 */
         //============ borrowed END
-
-
-        static MessageClientServer_Client NewReport()
+        //==================================================
+        //                Update report
+        //==================================================
+        static void UpdateReport()
         {
-            MessageClientServer_Client msg = new MessageClientServer_Client();
+            msgStatic.msgtype = MessageTypes.MSG_UPDATEPUSH;
+            msgStatic.msg_number = MessageCount();
+            msgStatic.time_stamp = DateTime.Now;
+            //--ping
+            Ping pingSender = new Ping();
+            PingReply pingReply = pingSender.Send(srv_address);
+            if (pingReply.Status == IPStatus.Success)
+                msgStatic.ping = pingReply.RoundtripTime;
+            else
+                msgStatic.ping = -1;
+            //---cpus
+#if !NDEBUG
+            Console.WriteLine("Getting Cpus...");
+#endif
+            //http://stackoverflow.com/questions/9777661/returning-cpu-usage-in-wmi-using-c-sharp
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("select * from Win32_PerfFormattedData_PerfOS_Processor");
+            ManagementObjectCollection cpus_collection = searcher.Get();
+            ManagementObject[] cpus = new ManagementObject[cpus_collection.Count];
+            cpus_collection.CopyTo(cpus, 0);
+            msgStatic.cpus = new ushort[cpus.Count() - 1]; //-1 for "_total"
+            for (int i = 0; i < msgStatic.cpus.Length; ++i)
+            {
+                msgStatic.cpus[i] = (ushort)(ulong)(cpus[i]["PercentProcessorTime"]); //raw is Int64
+            }
+            //---ram
+#if !NDEBUG
+            Console.WriteLine("Getting Memory...");
+#endif
+            MEMORYSTATUSEX memStatus = new MEMORYSTATUSEX();
+            if (GlobalMemoryStatusEx(memStatus))
+            {
+                msgStatic.ram_used = memStatus.ullAvailPhys;
+                msgStatic.swap_used = memStatus.ullAvailPageFile;
+            }
+            //---get hdds
+#if !NDEBUG
+            Console.WriteLine("Getting Drives...");
+#endif
+            DriveInfo[] drives = DriveInfo.GetDrives();
+            msgStatic.drives = new DriveInfoSlim[drives.Length];
+            for (int i = 0; i < drives.Length; ++i)
+            {
+                msgStatic.drives[i].name = drives[i].Name;
+                msgStatic.drives[i].type = drives[i].DriveType;
+                if (drives[i].IsReady)
+                {
+                    msgStatic.drives[i].free = drives[i].TotalFreeSpace;
+                    msgStatic.drives[i].total = drives[i].TotalSize;
+                }
+            }
+            //---processes
+#if !NDEBUG
+            Console.WriteLine("Getting Processes...");
+#endif
+            msgStatic.processes_total = Process.GetProcesses().Length;
+
+            //======get network info
+#if !NDEBUG
+            Console.WriteLine("Getting NICs...");
+#endif
+            //http://stackoverflow.com/questions/850650/reliable-method-to-get-machines-mac-address-in-c-sharp#7661829
+            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+            msgStatic.nics = new NetworkInterfaceSlim[nics.Length];
+            for (int i = 0; i < nics.Length; ++i)
+            {
+                msgStatic.nics[i].name = nics[i].Name;
+                msgStatic.nics[i].status = nics[i].OperationalStatus;
+                msgStatic.nics[i].speed = nics[i].Speed;
+                msgStatic.nics[i].mac_address = nics[i].GetPhysicalAddress().ToString(); //PhysicalAddress type wont serialize T_T
+                                                                                         //ip complciated because multiple addresses possible
+                foreach (var x in nics[i].GetIPProperties().UnicastAddresses)
+                {
+                    if (x.Address.AddressFamily == AddressFamily.InterNetwork && x.IsDnsEligible)
+                    {
+                        msgStatic.nics[i].ip = x.Address.ToString();
+                    }
+                }
+                //msg.nics[i].type = nics[i].GetType();
+            }
+        }
+        //==================================================
+        //                 NewReport()
+        //==================================================
+        static void NewReport()
+        {
+            //msgStatic = new MessageClientServer_Client();
             try
             {
                 //======get message info
-                msg.label = label;
-                msg.msgtype = MessageTypes.MSG_NEW; //TODO define
-                msg.msg_number = MessageCount();
-                msg.time_stamp = DateTime.Now;
-                msg.ping = 999; //TODO 
-                //--ping
-                Ping pingSender = new Ping();
-                PingReply pingReply = pingSender.Send(srv_address);
-                if (pingReply.Status == IPStatus.Success)
-                    msg.ping = pingReply.RoundtripTime;
-                else
-                    msg.ping = -1;
-                msg.client_version = client_version;
+                msgStatic.label = label;
+                //msgStatic.msgtype = MessageTypes.MSG_NEW;
+                
+                msgStatic.client_version = client_version;
 
-                msg.send_frequency = send_frequency;
+                msgStatic.send_frequency = send_frequency;
                 //======get general info
                 //---hostname
 #if !NDEBUG
                 Console.WriteLine("Getting Hostname...");
 #endif
-                msg.hostname = System.Environment.MachineName;
+                msgStatic.hostname = System.Environment.MachineName;
                 //---guid
 #if !NDEBUG
                 Console.WriteLine("Getting Serial...");
@@ -106,7 +186,7 @@ namespace ConsoleNet1
                 //TODO remove WMI... because inefficient
                 string serial = (string) (from x in new ManagementObjectSearcher("SELECT SerialNumber FROM Win32_OperatingSystem").Get().Cast<ManagementObject>()
                             select x.GetPropertyValue("SerialNumber")).FirstOrDefault();
-                msg.machine_serial = (serial != null) ? serial : "Unknown";
+                msgStatic.machine_serial = (serial != null) ? serial : "Unknown";
                 //---os version
 #if !NDEBUG
                 Console.WriteLine("Getting OSversion...");
@@ -120,89 +200,32 @@ namespace ConsoleNet1
                 //TODO remove WMI... because inefficient
                 var name = (from x in new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem").Get().Cast<ManagementObject>()
                             select x.GetPropertyValue("Caption")).FirstOrDefault();
-                msg.os_name = (name != null) ? name.ToString() : "Unknown";
-                //---cpus
-#if !NDEBUG
-                Console.WriteLine("Getting Cpus...");
-#endif
-                //http://stackoverflow.com/questions/9777661/returning-cpu-usage-in-wmi-using-c-sharp
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher("select * from Win32_PerfFormattedData_PerfOS_Processor");
-                ManagementObjectCollection cpus_collection = searcher.Get();
-                ManagementObject[] cpus = new ManagementObject[cpus_collection.Count];
-                cpus_collection.CopyTo(cpus, 0);
-                msg.cpus = new ushort[cpus.Count() - 1]; //-1 for "_total"
-                for (int i = 0; i < msg.cpus.Length; ++i) 
-                {
-                    msg.cpus[i] = (ushort)(ulong)(cpus[i]["PercentProcessorTime"]); //raw is Int64
-                }
+                msgStatic.os_name = (name != null) ? name.ToString() : "Unknown";
                 //---ram
 #if !NDEBUG
-                Console.WriteLine("Getting Memory...");
+                Console.WriteLine("Getting Memory (max)...");
 #endif
                 MEMORYSTATUSEX memStatus = new MEMORYSTATUSEX();
                 if (GlobalMemoryStatusEx(memStatus))
                 {
-                    msg.ram_total = memStatus.ullTotalPhys;
-                    msg.ram_used = memStatus.ullAvailPhys;
-                    msg.swap_total = memStatus.ullTotalPageFile;
-                    msg.swap_used = memStatus.ullAvailPageFile;
-                }
-
-                //---get hdds
-#if !NDEBUG
-                Console.WriteLine("Getting Drives...");
-#endif
-                DriveInfo[] drives = DriveInfo.GetDrives();
-                msg.drives = new DriveInfoSlim[drives.Length];
-                for (int i = 0; i < drives.Length; ++i)
-                {
-                    msg.drives[i].name = drives[i].Name;
-                    msg.drives[i].type = drives[i].DriveType;
-                    if (drives[i].IsReady)
-                    {
-                        msg.drives[i].free = drives[i].TotalFreeSpace;
-                        msg.drives[i].total = drives[i].TotalSize;
-                    }
-                }
-                //---processes
-#if !NDEBUG
-                Console.WriteLine("Getting Processes...");
-#endif
-                msg.processes_total = Process.GetProcesses().Length;
-
-                //======get network info
-#if !NDEBUG
-                Console.WriteLine("Getting NICs...");
-#endif
-                //http://stackoverflow.com/questions/850650/reliable-method-to-get-machines-mac-address-in-c-sharp#7661829
-                NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
-                msg.nics = new NetworkInterfaceSlim[nics.Length];
-                for(int i = 0; i < nics.Length; ++i)
-                {
-                    msg.nics[i].name = nics[i].Name;
-                    msg.nics[i].status = nics[i].OperationalStatus;
-                    msg.nics[i].speed = nics[i].Speed;
-                    msg.nics[i].mac_address = nics[i].GetPhysicalAddress().ToString(); //PhysicalAddress type wont serialize T_T
-                    //ip complciated because multiple addresses possible
-                    foreach (var x in nics[i].GetIPProperties().UnicastAddresses)
-                    {
-                        if (x.Address.AddressFamily == AddressFamily.InterNetwork && x.IsDnsEligible)
-                        {
-                            msg.nics[i].ip = x.Address.ToString();
-                        }
-                    }
-                    //msg.nics[i].type = nics[i].GetType();
+                    msgStatic.ram_total = memStatus.ullTotalPhys;
+                    //msgStatic.ram_used = memStatus.ullAvailPhys;
+                    msgStatic.swap_total = memStatus.ullTotalPageFile;
+                    //msgStatic.swap_used = memStatus.ullAvailPageFile;
                 }
                 //===IP address
+                UpdateReport();
                 //done! :D
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
-                msg.msgtype = MessageTypes.MSG_ERROR; //TODO ERROR status
+                msgStatic.msgtype = MessageTypes.MSG_ERROR; //TODO ERROR status
             }
-            return msg;
         }
+        //==================================================
+        //                  SendUDP(msg)
+        //==================================================
         //chose UDP since... many computer trashing hte network for a non-critical function...
         //...might as well be lightweight
         //for reliability, red flag if missing several checkins, not just one
@@ -252,6 +275,9 @@ namespace ConsoleNet1
                 Console.WriteLine(e.ToString());
             }
         }
+        //==================================================
+        //                  Main( )
+        //==================================================
         static void Main(string[] args)
         {
             //setup some options...
@@ -259,14 +285,15 @@ namespace ConsoleNet1
             srv_port = 13000;
             label = "testing_client";
             //get report
-            MessageClientServer_Client data = NewReport();
+            NewReport();
+            msgStatic.msgtype = MessageTypes.MSG_NEW;
             //msg
             Console.Write("MESSAGE?:");
-            data.msg = Console.ReadLine();
+            msgStatic.msg = Console.ReadLine();
             //output it
-            data.output();
+            msgStatic.output();
             //send it
-            SendUDP(data);
+            SendUDP(msgStatic);
         }
     }
 }
