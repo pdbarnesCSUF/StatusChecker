@@ -1,6 +1,6 @@
 ﻿//https://msdn.microsoft.com/en-us/library/system.net.sockets.tcplistener(v=vs.110).aspx?cs-save-lang=1&cs-lang=csharp#code-snippet-2
 //https://msdn.microsoft.com/en-us/library/system.net.sockets.udpclient(v=vs.110).aspx
-
+//http://stackoverflow.com/questions/177856/how-do-i-trap-ctrl-c-in-a-c-sharp-console-app#929717
 using ProtoBuf;
 using System;
 using System.IO;
@@ -74,12 +74,12 @@ namespace Server
                     {
                         ulong missed = clients.client_list[idx].Update(msg);
                         if (msg.msgtype == MessageTypes.MSG_UPDATEPUSH)
-                            Console.Write("Known client - reported" + " Lost:" + missed);
+                            Console.WriteLine("Known client - reported" + " Lost:" + missed);
                         else if (msg.msgtype == MessageTypes.MSG_NEW)
-                            Console.Write("Known client - Started");
+                            Console.WriteLine("Known client - Started");
                         else
-                            Console.Write("Known client - ERRORS!!" + msg.msgtype + " Lost:" + missed);
-                    }                    
+                            Console.WriteLine("Known client - ERRORS!!" + msg.msgtype + " Lost:" + missed);
+                    }
                     Console.WriteLine(msg.label + " said " + msg.msg);
                     Console.WriteLine("Sent from " +
                                                 remoteIpClients.Address.ToString() +

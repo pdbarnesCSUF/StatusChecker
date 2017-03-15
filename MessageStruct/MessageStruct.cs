@@ -146,6 +146,7 @@ public struct ClientStatus
     [ProtoMember(5)] public ulong report_last;      //ID of it
     [ProtoMember(6)] public ulong report_received;  //quantity
     [ProtoMember(7)] public ulong report_lost;      //quantity total
+    //[ProtoMember(8)] public string received_ip;  //what address gave this?
     public override string ToString()
     {
         return label + report_lost + ":" + report_received;
@@ -223,8 +224,14 @@ public struct MessageServerGUI_Clients
     {
         return client_list[idx].Update(msg);
     }
-    
-
+    public void display()
+    {
+        Console.WriteLine(String.Format("{0,16} {1,20}", "Label", "timestamp"));
+        foreach (ClientStatus cs in client_list)
+        {
+            Console.WriteLine(String.Format("{0,16} {1,20}", cs.label, cs.report.time_stamp));
+        }
+    }
 }
 //one static on server if use as options
 //sent out to other GUIs if they ask for it.
