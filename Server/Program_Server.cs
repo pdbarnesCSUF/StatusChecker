@@ -58,30 +58,32 @@ namespace Server
                 //msg received
                 //check serial against serials we have
                 //http://stackoverflow.com/questions/9854917/how-can-i-find-a-specific-element-in-a-listt
-
-                int idx = clients.client_list.FindIndex(x => x.machine_serial == msg.machine_serial);
-                Console.WriteLine("=====");
-                //Console.WriteLine("idx:" + idx);
-                if (idx < 0) //if new
+                lock (clients_lock)
                 {
-                    clients.client_list.Add(new ClientStatus(msg));
-                    if (msg.msgtype == MessageTypes.MSG_NEW)
-                        Console.WriteLine("New client - Started");
-                    else if (msg.msgtype == MessageTypes.MSG_UPDATEPUSH)
-                        Console.WriteLine("New client - reported");
-                    else
-                        Console.WriteLine("New client - ERRORS!!" + msg.msgtype);
-                }
-                else //if update
-                {
-                    ulong missed = clients.client_list[idx].Update(msg);
-                    if (msg.msgtype == MessageTypes.MSG_UPDATEPUSH)
-                        Console.WriteLine("Known client - reported" + " Lost:" + missed);
-                    else if (msg.msgtype == MessageTypes.MSG_NEW)
-                        Console.WriteLine("Known client - Started");
-                    else
-                        Console.WriteLine("Known client - ERRORS!!" + msg.msgtype + " Lost:" + missed);
-                }
+                    int idx = clients.client_list.FindIndex(x => x.machine_serial == msg.machine_serial);
+                    Console.WriteLine("=====");
+                    //Console.WriteLine("idx:" + idx);
+                    if (idx < 0) //if new
+                    {
+                        clients.client_list.Add(new ClientStatus(msg));
+                        if (msg.msgtype == MessageTypes.MSG_NEW)
+                            Console.WriteLine("New client - Started");
+                        else if (msg.msgtype == MessageTypes.MSG_UPDATEPUSH)
+                            Console.WriteLine("New client - reported");
+                        else
+                            Console.WriteLine("New client - ERRORS!!" + msg.msgtype);
+                    }
+                    else //if update
+                    {
+                        ulong missed = clients.client_list[idx].Update(msg);
+                        if (msg.msgtype == MessageTypes.MSG_UPDATEPUSH)
+                            Console.WriteLine("Known client - reported" + " Lost:" + missed);
+                        else if (msg.msgtype == MessageTypes.MSG_NEW)
+                            Console.WriteLine("Known client - Started");
+                        else
+                            Console.WriteLine("Known client - ERRORS!!" + msg.msgtype + " Lost:" + missed);
+                    }
+                }//lock clients_lock
                 Console.WriteLine(msg.label + " said " + msg.msg);
                 Console.WriteLine("Sent from " +
                                             remoteIpClients.Address.ToString() +
@@ -94,7 +96,7 @@ namespace Server
                                             remoteIpClients.Address.ToString() +
                                             " Got your messsage!");
                 udpClients.Send(sendBytes, sendBytes.Length, remoteIpClients);
-            }
+            }//!serverquit
         }
 
         static void Main(string[] args)
@@ -148,6 +150,7 @@ namespace Server
                 StopServer();
                 Console.WriteLine("Closed");
             }
+            //
         }//end of main
     }
 }
