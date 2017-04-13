@@ -227,9 +227,16 @@ public struct MessageServerGUI_Clients
     public void display()
     {
         Console.WriteLine(String.Format("{0,16} {1,20}", "Label", "timestamp"));
-        foreach (ClientStatus cs in client_list)
+        if (client_list.Count > 0)
         {
-            Console.WriteLine(String.Format("{0,16} {1,20}", cs.label, cs.report.time_stamp));
+            foreach (ClientStatus cs in client_list)
+            {
+                Console.WriteLine(String.Format("{0,16} {1,20}", cs.label, cs.report.time_stamp));
+            }
+        }
+        else
+        {
+            Console.WriteLine("No known clients");
         }
     }
 }
