@@ -119,6 +119,7 @@ namespace Server
                 while (!serverQuit)
                 {
                     Console.WriteLine("press q or CTRL+C to quit");
+                    Console.WriteLine("l: list of clients");
                     userinput = Console.ReadKey().KeyChar; //true means dont echo
                     Console.WriteLine();//if not echoing.... comment this out!
                     //MENU HERE ...if ever
@@ -126,6 +127,9 @@ namespace Server
                     {
                         case 'q':
                             serverQuit = true;
+                            break;
+                        case 'l':
+                            clients.display();
                             break;
                     }
 
@@ -150,7 +154,7 @@ namespace Server
                 StopServer();
                 Console.WriteLine("Closed");
             }
-            //
+            clients.display();
         }//end of main
     }
 }
