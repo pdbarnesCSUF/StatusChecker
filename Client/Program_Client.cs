@@ -77,6 +77,9 @@ namespace ConsoleNet1
             msgStatic.msgtype = MessageTypes.MSG_UPDATEPUSH;
             msgStatic.msg_number = MessageCount();
             msgStatic.time_stamp = DateTime.Now;
+#if !NDEBUG
+            Console.WriteLine("#" + msgStatic.msg_number + "  " +msgStatic.time_stamp);
+#endif
             //--ping
             Ping pingSender = new Ping();
             PingReply pingReply = pingSender.Send(srv_address);
