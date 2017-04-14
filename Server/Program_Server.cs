@@ -63,9 +63,9 @@ namespace Server
                     int idx = clients.client_list.FindIndex(x => x.machine_serial == msg.machine_serial);
                     Console.WriteLine("=====");
                     //Console.WriteLine("idx:" + idx);
+                    ulong missed = clients.Input(msg);
                     if (idx < 0) //if new
                     {
-                        clients.client_list.Add(new ClientStatus(msg));
                         if (msg.msgtype == MessageTypes.MSG_NEW)
                             Console.WriteLine("New client - Started");
                         else if (msg.msgtype == MessageTypes.MSG_UPDATEPUSH)
@@ -75,7 +75,6 @@ namespace Server
                     }
                     else //if update
                     {
-                        ulong missed = clients.client_list[idx].Update(msg);
                         if (msg.msgtype == MessageTypes.MSG_UPDATEPUSH)
                             Console.WriteLine("Known client - reported" + " Lost:" + missed);
                         else if (msg.msgtype == MessageTypes.MSG_NEW)
